@@ -4,6 +4,7 @@ package dev.duskbyte.module.player;
 import dev.duskbyte.module.Category;
 import dev.duskbyte.module.Module;
 import dev.duskbyte.setting.NumberSetting;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
