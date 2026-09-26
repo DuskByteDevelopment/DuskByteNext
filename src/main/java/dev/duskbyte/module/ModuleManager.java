@@ -7,6 +7,7 @@ import dev.duskbyte.module.render.*;
 import dev.duskbyte.module.player.*;
 import dev.duskbyte.module.misc.AntiAFK;
 import dev.duskbyte.module.misc.Timer;
+import dev.duskbyte.module.misc.ChatSuffix;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -38,6 +39,20 @@ public class ModuleManager {
         modules.add(new AutoEat());
         modules.add(new AntiAFK());
         modules.add(new Timer());
+        modules.add(new ChatSuffix());
+        modules.add(new AutoEZ());
+        modules.add(new AutoWeapon());
+        modules.add(new TriggerBot());
+        modules.add(new Jesus());
+        modules.add(new Parkour());
+        modules.add(new HighJump());
+        modules.add(new Sneak());
+        modules.add(new NoSlow());
+        modules.add(new Nametags());
+        modules.add(new StorageESP());
+        modules.add(new AutoTool());
+        modules.add(new AutoArmor());
+        modules.add(new AutoRespawn());
     }
 
     public static void tick() {

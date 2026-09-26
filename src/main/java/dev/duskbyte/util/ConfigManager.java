@@ -39,6 +39,7 @@ public class ConfigManager {
                         else if (s instanceof NumberSetting ns) ns.set(val.getAsDouble());
                         else if (s instanceof ModeSetting ms) ms.set(val.getAsString());
                         else if (s instanceof ColorSetting cs) cs.set(val.getAsInt());
+                        else if (s instanceof StringSetting ss) ss.set(val.getAsString());
                     }
                 }
             }
@@ -63,6 +64,7 @@ public class ConfigManager {
                         else if (s instanceof NumberSetting ns) sObj.addProperty(s.getName(), ns.get());
                         else if (s instanceof ModeSetting ms) sObj.addProperty(s.getName(), ms.get());
                         else if (s instanceof ColorSetting cs) sObj.addProperty(s.getName(), cs.get());
+                        else if (s instanceof StringSetting ss) sObj.addProperty(s.getName(), ss.get());
                     }
                     modObj.add("settings", sObj);
                 }

@@ -6,7 +6,9 @@
   "client": [
     "MinecraftClientMixin",
     "MinecraftClientAccessor",
-    "TitleScreenMixin"
+    "TitleScreenMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "ChatMixin"
   ],
   "injectors": {
     "defaultRequire": 1
