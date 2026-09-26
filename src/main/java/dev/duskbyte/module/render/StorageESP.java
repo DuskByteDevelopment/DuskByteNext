@@ -12,7 +12,9 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.chunk.WorldChunk;
 
 public class StorageESP extends Module {
     private final BoolSetting chests = add(new BoolSetting("Chests", true));
@@ -35,18 +37,27 @@ public class StorageESP extends Module {
         float g = ((c >> 8) & 0xFF) / 255f;
         float b = (c & 0xFF) / 255f;
 
-        // Iterate through loaded block entities
-        for (BlockEntity be : mc.world.blockEntities) {
-            boolean shouldRender = false;
-            if (chests.get() && be instanceof ChestBlockEntity) shouldRender = true;
-            if (enderChests.get() && be instanceof EnderChestBlockEntity) shouldRender = true;
-            if (shulkers.get() && be instanceof ShulkerBoxBlockEntity) shouldRender = true;
+        // Iterate loaded chunks and their block entities
+        ChunkPos playerChunk = mc.player.getChunkPos();
+        int viewDist = 4;
+        for (int cx = playerChunk.x - viewDist; cx <= playerChunk.x + viewDist; cx++) {
+            for (int cz = playerChunk.z - viewDist; cz <= playerChunk.z + viewDist; cz++) {
+                WorldChunk chunk = mc.world.getChunk(cx, cz);
+                if (chunk == null) continue;
+                for (var entry : chunk.getBlockEntities().entrySet()) {
+                    BlockEntity be = entry.getValue();
+                    boolean shouldRender = false;
+                    if (chests.get() && be instanceof ChestBlockEntity) shouldRender = true;
+                    if (enderChests.get() && be instanceof EnderChestBlockEntity) shouldRender = true;
+                    if (shulkers.get() && be instanceof ShulkerBoxBlockEntity) shouldRender = true;
 
-            if (!shouldRender) continue;
-            if (mc.player.squaredDistanceTo(be.getPos().getX() + 0.5, be.getPos().getY() + 0.5, be.getPos().getZ() + 0.5) > 64 * 64) continue;
+                    if (!shouldRender) continue;
+                    if (mc.player.squaredDistanceTo(be.getPos().getX() + 0.5, be.getPos().getY() + 0.5, be.getPos().getZ() + 0.5) > 64 * 64) continue;
 
-            Box box = new Box(be.getPos()).offset(-cam.x, -cam.y, -cam.z).expand(0.02);
-            WorldRenderer.drawBox(ms, vc, box, r, g, b, 1.0f);
+                    Box box = new Box(be.getPos()).offset(-cam.x, -cam.y, -cam.z).expand(0.02);
+                    WorldRenderer.drawBox(ms, vc, box, r, g, b, 1.0f);
+                }
+            }
         }
     }
 }

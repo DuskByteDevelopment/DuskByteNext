@@ -6,15 +6,12 @@ import dev.duskbyte.module.Module;
 import dev.duskbyte.setting.*;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 public class Nametags extends Module {
-    private final NumberSetting scale = add(new NumberSetting("Scale", 2.0, 0.5, 5.0, 0.1));
     private final BoolSetting showHealth = add(new BoolSetting("Show Health", true));
-    private final BoolSetting showArmor = add(new BoolSetting("Show Armor", true));
     private final BoolSetting showPing = add(new BoolSetting("Show Ping", true));
 
     public Nametags() {
@@ -29,30 +26,19 @@ public class Nametags extends Module {
         for (Entity e : mc.world.getPlayers()) {
             if (e == mc.player || !e.isAlive()) continue;
 
-            Vec3d pos = e.getPos().add(0, e.getStandingEyeHeight() + 0.5, 0).subtract(cam);
-
-            // Draw nametag using mc.textRenderer
             String name = e.getName().getString();
             if (showHealth.get() && e instanceof PlayerEntity p) {
                 name += " " + String.format("%.1f", p.getHealth()) + " HP";
             }
 
-            TextRenderer tr = mc.textRenderer;
-            float s = scale.get() * 0.02f;
-            int width = tr.getWidth(name);
-
-            // Simple 2D rendering above entity (using screen coords approximation)
-            // This is a simplified version - full nametags would use matrix transforms
-            double screenX = pos.x;
-            double screenY = pos.y + 0.3;
-            double screenZ = pos.z;
-
-            // Just render the name above the entity
-            // In production you'd use matrix transforms, but this works as a basic version
-            mc.inGameHud.drawTextWithShadow(tr, name,
-                (int)(e.getX() - width/2.0),
-                (int)(e.getY() + e.getStandingEyeHeight() + 0.5),
-                0xFFFFFF);
+            // Use textRenderer.draw with matrix stack for world rendering
+            Vec3d pos = e.getPos().add(0, e.getStandingEyeHeight() + 0.5, 0).subtract(cam);
+            var ms = context.matrixStack();
+            ms.push();
+            ms.translate(pos.x, pos.y, pos.z);
+            ms.scale(0.025f, -0.025f, 0.025f);
+            mc.textRenderer.draw(ms, name, -mc.textRenderer.getWidth(name) / 2f, 0, 0xFFFFFF);
+            ms.pop();
         }
     }
 }

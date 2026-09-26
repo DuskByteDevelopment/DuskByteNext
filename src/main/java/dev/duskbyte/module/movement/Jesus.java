@@ -4,6 +4,7 @@ package dev.duskbyte.module.movement;
 import dev.duskbyte.module.Category;
 import dev.duskbyte.module.Module;
 import dev.duskbyte.setting.NumberSetting;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import org.lwjgl.glfw.GLFW;
 
@@ -20,8 +21,10 @@ public class Jesus extends Module {
         if (mc.player == null || mc.world == null || mc.currentScreen != null) return;
         if (mc.player.isSpectator() || mc.player.isCreative()) return;
 
-        // Check if in water/lava
-        boolean inFluid = mc.player.isTouchingFluid(Fluids.WATER) || mc.player.isTouchingFluid(Fluids.LAVA);
+        // Check if in fluid
+        FluidState fluidBelow = mc.world.getFluidState(mc.player.getBlockPos());
+        boolean inFluid = !fluidBelow.isEmpty();
+
         if (!inFluid) return;
 
         // Push up when in fluid
@@ -33,7 +36,7 @@ public class Jesus extends Module {
         }
 
         // Jump when in fluid (helps climb out)
-        if (mc.options.jumpKey.isPressed() && mc.player.isTouchingFluid(Fluids.WATER)) {
+        if (mc.options.jumpKey.isPressed() && fluidBelow.isOf(Fluids.WATER)) {
             mc.player.setVelocity(vel.x, upSpeed.get() * 2, vel.z);
         }
     }

@@ -33,14 +33,13 @@ public class AutoArmor extends Module {
     private void equipBestForSlot(int armorSlotIndex) {
         var sh = mc.player.playerScreenHandler;
         Slot targetSlot = sh.slots.get(armorSlotIndex);
-        var targetStack = targetSlot.getStack();
 
         // Determine body part from equipped item
         EquipmentSlot equipSlot = getEquipmentSlot(targetSlot);
 
         // Find best armor in inventory for this slot
         int bestIndex = -1;
-        int bestScore = getArmorScore(targetStack.getItem());
+        int bestScore = getArmorScore(targetSlot.getStack().getItem());
 
         for (int i = 9; i < sh.slots.size(); i++) {
             Slot slot = sh.slots.get(i);
@@ -66,9 +65,13 @@ public class AutoArmor extends Module {
 
     private EquipmentSlot getEquipmentSlot(Slot slot) {
         var stack = slot.getStack();
-        if (stack.isEmpty()) {
-            // Guess based on index
-            return switch (slot.getIndex()) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ArmorItem armor) {
+            return armor.getSlotType();
+        }
+        // Guess from inventory index
+        int idx = slot.getIndex();
+        if (idx >= 36 && idx <= 39) {
+            return switch (idx) {
                 case 36 -> EquipmentSlot.FEET;
                 case 37 -> EquipmentSlot.LEGS;
                 case 38 -> EquipmentSlot.CHEST;
@@ -76,39 +79,38 @@ public class AutoArmor extends Module {
                 default -> EquipmentSlot.MAINHAND;
             };
         }
-        if (stack.getItem() instanceof ArmorItem armor) {
-            return armor.getSlotType();
-        }
         return EquipmentSlot.MAINHAND;
     }
 
     private int getArmorScore(Item item) {
-        return switch (item) {
-            case NetheriteHelmet h -> 53;
-            case DiamondHelmet h -> 52;
-            case IronHelmet h -> 33;
-            case ChainmailHelmet h -> 23;
-            case GoldenHelmet h -> 13;
-            case LeatherHelmet h -> 12;
-            case NetheriteChestplate c -> 58;
-            case DiamondChestplate c -> 57;
-            case IronChestplate c -> 38;
-            case ChainmailChestplate c -> 28;
-            case GoldenChestplate c -> 18;
-            case LeatherTunic c -> 17;
-            case NetheriteLeggings l -> 55;
-            case DiamondLeggings l -> 54;
-            case IronLeggings l -> 35;
-            case ChainmailLeggings l -> 25;
-            case GoldenLeggings l -> 15;
-            case LeatherLeggings l -> 14;
-            case NetheriteBoots b -> 53;
-            case DiamondBoots b -> 52;
-            case IronBoots b -> 33;
-            case ChainmailBoots b -> 23;
-            case GoldenBoots b -> 13;
-            case LeatherBoots b -> 12;
-            default -> 0;
-        };
+        // Helmet
+        if (item == Items.NETHERITE_HELMET) return 53;
+        if (item == Items.DIAMOND_HELMET) return 52;
+        if (item == Items.IRON_HELMET) return 33;
+        if (item == Items.CHAINMAIL_HELMET) return 23;
+        if (item == Items.GOLDEN_HELMET) return 13;
+        if (item == Items.LEATHER_HELMET) return 12;
+        // Chestplate
+        if (item == Items.NETHERITE_CHESTPLATE) return 58;
+        if (item == Items.DIAMOND_CHESTPLATE) return 57;
+        if (item == Items.IRON_CHESTPLATE) return 38;
+        if (item == Items.CHAINMAIL_CHESTPLATE) return 28;
+        if (item == Items.GOLDEN_CHESTPLATE) return 18;
+        if (item == Items.LEATHER_CHESTPLATE) return 17;
+        // Leggings
+        if (item == Items.NETHERITE_LEGGINGS) return 55;
+        if (item == Items.DIAMOND_LEGGINGS) return 54;
+        if (item == Items.IRON_LEGGINGS) return 35;
+        if (item == Items.CHAINMAIL_LEGGINGS) return 25;
+        if (item == Items.GOLDEN_LEGGINGS) return 15;
+        if (item == Items.LEATHER_LEGGINGS) return 14;
+        // Boots
+        if (item == Items.NETHERITE_BOOTS) return 53;
+        if (item == Items.DIAMOND_BOOTS) return 52;
+        if (item == Items.IRON_BOOTS) return 33;
+        if (item == Items.CHAINMAIL_BOOTS) return 23;
+        if (item == Items.GOLDEN_BOOTS) return 13;
+        if (item == Items.LEATHER_BOOTS) return 12;
+        return 0;
     }
 }

@@ -36,8 +36,8 @@ public class AutoWeapon extends Module {
     public void onAttack(net.minecraft.entity.Entity target) {
         if (mc.player == null) return;
         int bestSlot = findBestWeapon();
-        if (bestSlot != -1 && bestSlot != mc.player.getInventory().selected) {
-            lastSlot = mc.player.getInventory().selected;
+        if (bestSlot != -1 && bestSlot != mc.player.getInventory().selectedSlot) {
+            lastSlot = mc.player.getInventory().selectedSlot;
             mc.interactionManager.clickSlot(
                 mc.player.playerScreenHandler.syncId,
                 36 + bestSlot, 0, SlotActionType.SWAP, mc.player);

@@ -48,8 +48,8 @@ public class AutoTool extends Module {
         if (now - lastSwitch < delay.get()) return;
 
         int bestSlot = findBestTool(state);
-        if (bestSlot != -1 && bestSlot != mc.player.getInventory().selected) {
-            if (lastSlot == -1) lastSlot = mc.player.getInventory().selected;
+        if (bestSlot != -1 && bestSlot != mc.player.getInventory().selectedSlot) {
+            if (lastSlot == -1) lastSlot = mc.player.getInventory().selectedSlot;
             mc.interactionManager.clickSlot(
                 mc.player.playerScreenHandler.syncId,
                 36 + bestSlot, 0, SlotActionType.SWAP, mc.player);
