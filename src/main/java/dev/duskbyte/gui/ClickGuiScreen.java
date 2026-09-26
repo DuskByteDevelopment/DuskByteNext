@@ -35,7 +35,7 @@ public class ClickGuiScreen extends Screen {
             for (Category cat : Category.values()) {
                 ModulePanel panel = new ModulePanel(cat, posX, posY);
                 panels.add(panel);
-                posX += panel.width + spacing;
+                posX += panel.getWidth() + spacing;
             }
             initialized = true;
         }

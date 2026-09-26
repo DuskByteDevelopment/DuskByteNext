@@ -14,6 +14,11 @@ public abstract class GuiPanel {
     protected boolean dragging = false;
     protected double dragOffsetX, dragOffsetY;
 
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getWidth() { return width; }
+    public float getHeight() { return height; }
+
     // Scroll
     protected float scrollProgress = 0f;
     protected float scrollVelocity = 0f;

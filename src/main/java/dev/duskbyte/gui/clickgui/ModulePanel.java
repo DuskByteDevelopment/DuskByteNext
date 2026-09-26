@@ -1,12 +1,10 @@
+
 package dev.duskbyte.gui.clickgui;
 
-import dev.duskbyte.gui.util.AnimatedValue;
 import dev.duskbyte.module.Category;
 import dev.duskbyte.module.Module;
 import dev.duskbyte.module.ModuleManager;
-import dev.duskbyte.setting.*;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import java.util.*;
 
@@ -47,36 +45,33 @@ public class ModulePanel extends GuiPanel {
 
     @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        long now = System.currentTimeMillis();
         updateScrollPhysics();
         updateMouseState(mouseX, mouseY);
-
         width = panelWidth;
 
         // Background
-        ctx.fill((int) x, (int) y, (int) (x + width), (int) (y + height), 0xE0111111);
+        ctx.fill(i(x), i(y), i(x + width), i(y + height), 0xE0111111);
 
         // Title bar
         int catColor = category.color | 0xFF000000;
-        ctx.fill((int) x, (int) y, (int) (x + width), (int) (y + titleHeight), catColor);
+        ctx.fill(i(x), i(y), i(x + width), i(y + titleHeight), catColor);
 
         // Title text
         String title = "§l" + category.getTitle().getString();
-        ctx.drawTextWithShadow(mc.textRenderer, title, x + 4, y + 4, 0xFFFFFFFF);
+        ctx.drawTextWithShadow(mc.textRenderer, title, i(x + 4), i(y + 4), 0xFFFFFFFF);
 
         // Module count
         String count = String.valueOf(modules.size());
-        ctx.drawTextWithShadow(mc.textRenderer, count, x + width - mc.textRenderer.getWidth(count) - 4, y + 4, 0xAAFFFFFF);
+        ctx.drawTextWithShadow(mc.textRenderer, count, i(x + width - mc.textRenderer.getWidth(count) - 4), i(y + 4), 0xAAFFFFFF);
 
-        // Module list (clipped area)
+        // Module list
         float contentY = y + titleHeight + 1;
         float contentBottom = y + height;
 
-        for (int i = 0; i < modules.size(); i++) {
-            ModuleEntry entry = modules.get(i);
-            float modY = contentY + i * (moduleHeight + moduleSpacing) - scrollProgress;
+        for (int idx = 0; idx < modules.size(); idx++) {
+            ModuleEntry entry = modules.get(idx);
+            float modY = contentY + idx * (moduleHeight + moduleSpacing) - scrollProgress;
 
-            // Skip if outside visible area
             if (modY + moduleHeight < contentY) continue;
             if (modY > contentBottom) break;
 
@@ -88,9 +83,9 @@ public class ModulePanel extends GuiPanel {
         if (totalContent > height - titleHeight) {
             float viewRatio = (height - titleHeight) / totalContent;
             float scrollRatio = scrollProgress / totalContent;
-            int sbX = (int) (x + width - 3);
-            int sbH = Math.max(10, (int) ((height - titleHeight) * viewRatio));
-            int sbY = (int) (y + titleHeight + scrollRatio * (height - titleHeight - sbH));
+            int sbX = i(x + width - 3);
+            int sbH = Math.max(10, i((height - titleHeight) * viewRatio));
+            int sbY = i(y + titleHeight + scrollRatio * (height - titleHeight - sbH));
             ctx.fill(sbX, sbY, sbX + 2, sbY + sbH, 0x60FFFFFF);
         }
     }
@@ -99,7 +94,6 @@ public class ModulePanel extends GuiPanel {
     public void mouseClicked(double mouseX, double mouseY, int button) {
         if (!isHovered(mouseX, mouseY)) return;
 
-        // Title bar = drag
         if (mouseY >= y && mouseY <= y + titleHeight) {
             if (button == 0) {
                 dragging = true;
@@ -109,22 +103,19 @@ public class ModulePanel extends GuiPanel {
             return;
         }
 
-        // Module click
         float contentY = y + titleHeight + 1;
-        for (int i = 0; i < modules.size(); i++) {
-            ModuleEntry entry = modules.get(i);
-            float modY = contentY + i * (moduleHeight + moduleSpacing) - scrollProgress;
+        for (int idx = 0; idx < modules.size(); idx++) {
+            ModuleEntry entry = modules.get(idx);
+            float modY = contentY + idx * (moduleHeight + moduleSpacing) - scrollProgress;
             if (mouseY >= modY && mouseY <= modY + moduleHeight && mouseX >= x + 2 && mouseX <= x + width - 2) {
                 if (button == 0) {
                     entry.module.toggle();
                     entry.flashTime = System.currentTimeMillis();
                 } else if (button == 1) {
-                    // Open settings panel
                     if (!entry.module.getSettings().isEmpty()) {
                         SettingPanel.open(entry.module, (float) mouseX, (float) mouseY);
                     }
                 } else if (button == 2) {
-                    // Bind
                     SettingPanel.openBind(entry.module, (float) mouseX, (float) mouseY);
                 }
                 return;
@@ -146,60 +137,51 @@ public class ModulePanel extends GuiPanel {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false;
-    }
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) { return false; }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
-        return false;
-    }
+    public boolean charTyped(char chr, int modifiers) { return false; }
+
+    /** float to int helper */
+    private static int i(float v) { return (int) v; }
 
     private static class ModuleEntry {
         final Module module;
         long flashTime = 0;
 
-        ModuleEntry(Module module) {
-            this.module = module;
-        }
+        ModuleEntry(Module module) { this.module = module; }
 
         void render(DrawContext ctx, float x, float y, float w, float h, int mouseX, int mouseY) {
             boolean hovered = mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
             boolean enabled = module.isEnabled();
 
-            // Background
             int bgColor = enabled ? 0xFF333333 : 0xFF1A1A1A;
-            ctx.fill((int) x, (int) y, (int) (x + w), (int) (y + h), bgColor);
+            ctx.fill(i(x), i(y), i(x + w), i(y + h), bgColor);
 
-            // Flash animation on toggle
             long now = System.currentTimeMillis();
             long elapsed = now - flashTime;
             if (elapsed < 300) {
                 float flash = 1f - elapsed / 300f;
                 int flashAlpha = (int) (0x40 * flash);
-                ctx.fill((int) x, (int) y, (int) (x + w), (int) (y + h), 0xFF00FF00 | (flashAlpha << 24));
+                ctx.fill(i(x), i(y), i(x + w), i(y + h), 0xFF00FF00 | (flashAlpha << 24));
             }
 
-            // Accent bar
             int accentColor = enabled ? (module.getCategory().color | 0xFF000000) : 0xFF333333;
-            ctx.fill((int) x, (int) y, (int) (x + 2), (int) (y + h), accentColor);
+            ctx.fill(i(x), i(y), i(x + 2), i(y + h), accentColor);
 
-            // Hover overlay
             if (hovered) {
-                ctx.fill((int) x, (int) y, (int) (x + w), (int) (y + h), 0x20FFFFFF);
+                ctx.fill(i(x), i(y), i(x + w), i(y + h), 0x20FFFFFF);
             }
 
-            // Module name
             String name = module.getTitle().getString();
             int textColor = enabled ? 0xFFFFFF : 0xAAAAAA;
-            ctx.drawTextWithShadow(mc.textRenderer, name, x + 5, y + 3, textColor);
+            ctx.drawTextWithShadow(mc.textRenderer, name, i(x + 5), i(y + 3), textColor);
 
-            // Keybind
             if (module.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
                 String keyName = GLFW.glfwGetKeyName(module.getKey(), 0);
                 if (keyName == null) keyName = "K" + module.getKey();
                 ctx.drawTextWithShadow(mc.textRenderer, keyName,
-                    x + w - mc.textRenderer.getWidth(keyName) - 3, y + 3, 0x666666);
+                    i(x + w - mc.textRenderer.getWidth(keyName) - 3), i(y + 3), 0x666666);
             }
         }
     }
