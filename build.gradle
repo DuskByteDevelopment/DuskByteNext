@@ -1,19 +1,15 @@
 
-import java.text.SimpleDateFormat
-
 plugins {
     id 'fabric-loom' version '1.7.4'
     id 'java'
 }
 
-// Git version: git-xxxxxxx
 def gitHash = 'unknown'
 try {
     def proc = 'git rev-parse --short HEAD'.execute()
     proc.waitFor()
     gitHash = proc.text.trim()
 } catch (Exception ignored) {}
-
 def gitDirty = ''
 try {
     def proc = 'git diff --quiet'.execute()
@@ -38,7 +34,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.1")))
 }
 
@@ -54,11 +49,9 @@ tasks.withType(JavaCompile).configureEach {
     it.options.compilerArgs += ['-nowarn', '-Xlint:none', '-Xmaxerrs', '100000', '-Xmaxwarns', '0']
 }
 
+// Fix duplicate resource entries
 tasks.named('jar') {
-    from('src/main/resources') {
-        include '**/*.json'
-        include '**/*.png'
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
             'Implementation-Title': 'DuskByteClient',
@@ -67,10 +60,11 @@ tasks.named('jar') {
     }
 }
 
-// Print version on build
+tasks.named('sourcesJar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 task printVersion {
-    doFirst {
-        println "Building DuskByteClient v${project.version}"
-    }
+    doFirst { println "Building DuskByteClient v${project.version}" }
 }
 build.dependsOn printVersion
