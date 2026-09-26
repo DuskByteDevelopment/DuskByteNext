@@ -1,0 +1,52 @@
+
+{
+  "duskbyte.category.combat": "战斗",
+  "duskbyte.category.movement": "移动",
+  "duskbyte.category.render": "渲染",
+  "duskbyte.category.player": "玩家",
+  "duskbyte.category.misc": "杂项",
+
+  "duskbyte.module.combat.killaura": "杀戮光环",
+  "duskbyte.module.combat.velocity": "反击退",
+  "duskbyte.module.combat.criticals": "暴击",
+  "duskbyte.module.combat.autoclicker": "自动点击",
+
+  "duskbyte.module.movement.sprint": "自动疾跑",
+  "duskbyte.module.movement.speed": "速度",
+  "duskbyte.module.movement.flight": "飞行",
+  "duskbyte.module.movement.nofall": "防摔伤",
+  "duskbyte.module.movement.step": "瞬步上墙",
+  "duskbyte.module.movement.elytrafly": "鞘翅飞行",
+
+  "duskbyte.module.render.esp": "透视高亮",
+  "duskbyte.module.render.tracers": "追踪线",
+  "duskbyte.module.render.fullbright": "夜视全亮",
+  "duskbyte.module.render.chams": "实体穿透",
+
+  "duskbyte.module.player.autototem": "自动图腾",
+  "duskbyte.module.player.cheststealer": "箱子偷取",
+  "duskbyte.module.player.fastplace": "快速放置",
+  "duskbyte.module.player.autoeat": "自动进食",
+
+  "duskbyte.module.misc.antiafk": "防挂机",
+  "duskbyte.module.misc.timer": "计时加速",
+
+  "duskbyte.setting.range": "范围",
+  "duskbyte.setting.cps": "每秒攻击次数",
+  "duskbyte.setting.players": "玩家",
+  "duskbyte.setting.mobs": "怪物",
+  "duskbyte.setting.animals": "动物",
+  "duskbyte.setting.rotate": "转向",
+  "duskbyte.setting.speed": "速度",
+  "duskbyte.setting.height": "高度",
+  "duskbyte.setting.linewidth": "线宽",
+  "duskbyte.setting.color": "颜色",
+  "duskbyte.setting.throughwalls": "穿墙显示",
+  "duskbyte.setting.delay": "延迟",
+  "duskbyte.setting.interval": "间隔",
+
+  "duskbyte.gui.bind": "绑定",
+  "duskbyte.gui.tip": "左键=开关 | 右键=设置 | 中键=绑定按键",
+
+  "key.duskbyte.clickgui": "打开 DuskByte 菜单"
+}

@@ -1,0 +1,14 @@
+
+{
+  "required": true,
+  "package": "dev.duskbyte.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ClientPlayNetworkHandlerMixin",
+    "MinecraftClientMixin",
+    "TitleScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

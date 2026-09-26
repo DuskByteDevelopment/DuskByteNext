@@ -1,0 +1,88 @@
+
+package dev.duskbyte.module;
+
+import dev.duskbyte.module.combat.*;
+import dev.duskbyte.module.movement.*;
+import dev.duskbyte.module.render.*;
+import dev.duskbyte.module.player.*;
+import dev.duskbyte.module.misc.*;
+import net.minecraft.client.MinecraftClient;
+import org.lwjgl.glfw.GLFW;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ModuleManager {
+    private static final List<Module> modules = new ArrayList<>();
+    private static final Map<Module, Boolean> keyStates = new ConcurrentHashMap<>();
+
+    public static void init() {
+        // Combat
+        modules.add(new KillAura());
+        modules.add(new Velocity());
+        modules.add(new Criticals());
+        modules.add(new AutoClicker());
+
+        // Movement
+        modules.add(new Sprint());
+        modules.add(new Speed());
+        modules.add(new Flight());
+        modules.add(new NoFall());
+        modules.add(new Step());
+        modules.add(new ElytraFly());
+
+        // Render
+        modules.add(new ESP());
+        modules.add(new Tracers());
+        modules.add(new Fullbright());
+        modules.add(new Chams());
+
+        // Player
+        modules.add(new AutoTotem());
+        modules.add(new ChestStealer());
+        modules.add(new FastPlace());
+        modules.add(new AutoEat());
+
+        // Misc
+        modules.add(new AntiAFK());
+        modules.add(new Timer());
+    }
+
+    public static void tick() {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+
+        long window = mc.getWindow().getHandle();
+        for (Module m : modules) {
+            if (m.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
+                boolean down = InputUtil.isKeyPressed(window, m.getKey());
+                if (down && !keyStates.getOrDefault(m, false)) m.toggle();
+                keyStates.put(m, down);
+            }
+            if (m.isEnabled()) m.onTick();
+        }
+    }
+
+    public static void attack(net.minecraft.entity.Entity target) {
+        for (Module m : modules) {
+            if (m.isEnabled()) m.onAttack(target);
+        }
+    }
+
+    public static Module get(Class<? extends Module> clazz) {
+        return modules.stream().filter(m -> clazz.isInstance(m)).findFirst().orElse(null);
+    }
+
+    public static List<Module> getModules() { return Collections.unmodifiableList(modules); }
+
+    public static List<Module> getEnabled() {
+        List<Module> enabled = new ArrayList<>();
+        for (Module m : modules) if (m.isEnabled()) enabled.add(m);
+        return enabled;
+    }
+
+    public static List<Module> getByCategory(Category cat) {
+        List<Module> list = new ArrayList<>();
+        for (Module m : modules) if (m.getCategory() == cat) list.add(m);
+        return list;
+    }
+}

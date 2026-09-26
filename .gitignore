@@ -1,0 +1,17 @@
+
+.gradle/
+build/
+out/
+*.class
+run/
+bin/
+.settings/
+.project
+.classpath
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Only ignore the binary jar (scripts are text, keep them)
+gradle/wrapper/gradle-wrapper.jar

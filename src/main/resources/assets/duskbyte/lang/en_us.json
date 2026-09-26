@@ -1,0 +1,52 @@
+
+{
+  "duskbyte.category.combat": "Combat",
+  "duskbyte.category.movement": "Movement",
+  "duskbyte.category.render": "Render",
+  "duskbyte.category.player": "Player",
+  "duskbyte.category.misc": "Misc",
+
+  "duskbyte.module.combat.killaura": "Kill Aura",
+  "duskbyte.module.combat.velocity": "Velocity",
+  "duskbyte.module.combat.criticals": "Criticals",
+  "duskbyte.module.combat.autoclicker": "Auto Clicker",
+
+  "duskbyte.module.movement.sprint": "Sprint",
+  "duskbyte.module.movement.speed": "Speed",
+  "duskbyte.module.movement.flight": "Flight",
+  "duskbyte.module.movement.nofall": "No Fall",
+  "duskbyte.module.movement.step": "Step",
+  "duskbyte.module.movement.elytrafly": "Elytra Fly",
+
+  "duskbyte.module.render.esp": "ESP",
+  "duskbyte.module.render.tracers": "Tracers",
+  "duskbyte.module.render.fullbright": "Fullbright",
+  "duskbyte.module.render.chams": "Chams",
+
+  "duskbyte.module.player.autototem": "Auto Totem",
+  "duskbyte.module.player.cheststealer": "Chest Stealer",
+  "duskbyte.module.player.fastplace": "Fast Place",
+  "duskbyte.module.player.autoeat": "Auto Eat",
+
+  "duskbyte.module.misc.antiafk": "Anti AFK",
+  "duskbyte.module.misc.timer": "Timer",
+
+  "duskbyte.setting.range": "Range",
+  "duskbyte.setting.cps": "CPS",
+  "duskbyte.setting.players": "Players",
+  "duskbyte.setting.mobs": "Mobs",
+  "duskbyte.setting.animals": "Animals",
+  "duskbyte.setting.rotate": "Rotate",
+  "duskbyte.setting.speed": "Speed",
+  "duskbyte.setting.height": "Height",
+  "duskbyte.setting.linewidth": "Line Width",
+  "duskbyte.setting.color": "Color",
+  "duskbyte.setting.throughwalls": "Through Walls",
+  "duskbyte.setting.delay": "Delay",
+  "duskbyte.setting.interval": "Interval",
+
+  "duskbyte.gui.bind": "Bind",
+  "duskbyte.gui.tip": "Left=Toggle | Right=Settings | Middle=Bind",
+
+  "key.duskbyte.clickgui": "Open DuskByte GUI"
+}
