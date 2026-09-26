@@ -13,5 +13,8 @@ bin/
 *.ipr
 *.iws
 
+# Reference/decompiled code (not part of the project)
+reference/
+
 # Only ignore the binary jar (scripts are text, keep them)
 gradle/wrapper/gradle-wrapper.jar
