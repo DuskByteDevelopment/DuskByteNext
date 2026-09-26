@@ -9,10 +9,5 @@ public class FastPlace extends Module {
     public FastPlace() {
         super("FastPlace", "Removes block placement delay", Category.PLAYER, GLFW.GLFW_KEY_H);
     }
-
-    @Override
-    public void onTick() {
-        if (mc.player == null) return;
-        mc.itemUseCooldown = 0;
-    }
+    // Actual logic is in MinecraftClientMixin
 }

@@ -11,20 +11,6 @@ public class Step extends Module {
     public Step() {
         super("Step", "Step up blocks instantly", Category.MOVEMENT);
     }
-
-    @Override
-    public void onEnable() {
-        if (mc.player != null) mc.player.stepHeight = (float) height.get().doubleValue();
-    }
-
-    @Override
-    public void onDisable() {
-        if (mc.player != null) mc.player.stepHeight = 0.6f;
-    }
-
-    @Override
-    public void onTick() {
-        if (mc.player == null) return;
-        mc.player.stepHeight = (float) height.get().doubleValue();
-    }
+    // Actual logic handled via mixin or stepHeight accessor
+    // For now this is a placeholder - enable to boost stepHeight via mixin
 }

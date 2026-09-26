@@ -9,11 +9,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 public class Tracers extends Module {
@@ -22,12 +20,13 @@ public class Tracers extends Module {
 
     public Tracers() {
         super("Tracers", "Draws lines to entities", Category.RENDER);
-        WorldRenderEvents.BEFORE_END.register(this::onWorldRender);
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(this::onWorldRender);
     }
 
     private void onWorldRender(WorldRenderContext context) {
         if (!isEnabled() || mc.world == null || mc.player == null) return;
         MatrixStack ms = context.matrixStack();
+        if (ms == null) return;
         VertexConsumer vc = context.consumers().getBuffer(RenderLayer.getLines());
         Vec3d cam = mc.gameRenderer.getCamera().getPos();
         Vec3d eye = mc.player.getEyePos();

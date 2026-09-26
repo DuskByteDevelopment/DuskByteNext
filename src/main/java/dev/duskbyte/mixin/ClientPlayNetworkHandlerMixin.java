@@ -18,7 +18,7 @@ public class ClientPlayNetworkHandlerMixin {
         MinecraftClient mc = MinecraftClient.getInstance();
         Velocity velocity = (Velocity) ModuleManager.get(Velocity.class);
         if (velocity != null && velocity.isEnabled() && mc.player != null) {
-            if (packet.getId() == mc.player.getId()) {
+            if (packet.getEntityId() == mc.player.getId()) {
                 ci.cancel();
             }
         }

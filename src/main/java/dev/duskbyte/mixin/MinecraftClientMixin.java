@@ -16,7 +16,9 @@ public class MinecraftClientMixin {
         FastPlace fastPlace = (FastPlace) ModuleManager.get(FastPlace.class);
         if (fastPlace != null && fastPlace.isEnabled()) {
             MinecraftClient mc = MinecraftClient.getInstance();
-            mc.itemUseCooldown = 0;
+            // itemUseCooldown is accessed via mixin - use reflection-free approach
+            // We set the field directly since we're inside the mixin
+            ((MinecraftClientAccessor) mc).setItemUseCooldown(0);
         }
     }
 }

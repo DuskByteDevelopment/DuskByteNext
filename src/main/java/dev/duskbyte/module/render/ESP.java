@@ -8,13 +8,15 @@ import dev.duskbyte.setting.ColorSetting;
 import dev.duskbyte.setting.NumberSetting;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.Monster;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
@@ -27,7 +29,7 @@ public class ESP extends Module {
 
     public ESP() {
         super("ESP", "Highlights entities through walls", Category.RENDER);
-        WorldRenderEvents.BEFORE_END.register(this::onWorldRender);
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(this::onWorldRender);
     }
 
     private void onWorldRender(WorldRenderContext context) {
@@ -41,9 +43,9 @@ public class ESP extends Module {
         float b = (c & 0xFF) / 255f;
         for (Entity e : mc.world.getEntities()) {
             if (e == mc.player || !(e instanceof LivingEntity) || !e.isAlive()) continue;
-            if (e instanceof net.minecraft.entity.player.PlayerEntity && !players.get()) continue;
-            if (e instanceof net.minecraft.entity.mob.Monster && !mobs.get()) continue;
-            if (e instanceof net.minecraft.entity.passive.AnimalEntity && !animals.get()) continue;
+            if (e instanceof PlayerEntity && !players.get()) continue;
+            if (e instanceof Monster && !mobs.get()) continue;
+            if (e instanceof AnimalEntity && !animals.get()) continue;
             Box box = e.getBoundingBox().offset(-cam.x, -cam.y, -cam.z).expand(0.05, 0.05, 0.05);
             WorldRenderer.drawBox(ms, vc, box, r, g, b, 1.0f);
         }
