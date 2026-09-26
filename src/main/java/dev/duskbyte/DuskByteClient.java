@@ -1,3 +1,4 @@
+
 package dev.duskbyte;
 
 import dev.duskbyte.gui.ClickGuiScreen;
@@ -14,7 +15,19 @@ import org.lwjgl.glfw.GLFW;
 
 public class DuskByteClient implements ClientModInitializer {
     public static final String NAME = "DuskByte";
-    public static final String VERSION = "1.0.0";
+    public static String VERSION = "dev";
+
+    static {
+        try {
+            var url = DuskByteClient.class.getProtectionDomain().getCodeSource().getLocation();
+            var manifest = new java.net.URL(url, "META-INF/MANIFEST.MF").openConnection().getInputStream();
+            var props = new java.util.Properties();
+            props.load(manifest);
+            manifest.close();
+            VERSION = props.getProperty("Implementation-Version", "dev");
+        } catch (Exception ignored) {}
+    }
+
     public static KeyBinding clickGuiKey;
 
     @Override

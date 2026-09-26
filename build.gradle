@@ -1,10 +1,27 @@
 
+import java.text.SimpleDateFormat
+
 plugins {
     id 'fabric-loom' version '1.7.4'
     id 'java'
 }
 
-version = project.mod_version
+// Git version: git-xxxxxxx
+def gitHash = 'unknown'
+try {
+    def proc = 'git rev-parse --short HEAD'.execute()
+    proc.waitFor()
+    gitHash = proc.text.trim()
+} catch (Exception ignored) {}
+
+def gitDirty = ''
+try {
+    def proc = 'git diff --quiet'.execute()
+    proc.waitFor()
+    if (proc.exitValue() != 0) gitDirty = '-dirty'
+} catch (Exception ignored) {}
+
+version = "${project.mod_version}-git-${gitHash}${gitDirty}"
 group = project.maven_group
 
 base { archivesName = project.archives_base_name }
@@ -42,4 +59,18 @@ tasks.named('jar') {
         include '**/*.json'
         include '**/*.png'
     }
+    manifest {
+        attributes(
+            'Implementation-Title': 'DuskByteClient',
+            'Implementation-Version': project.version,
+        )
+    }
 }
+
+// Print version on build
+task printVersion {
+    doFirst {
+        println "Building DuskByteClient v${project.version}"
+    }
+}
+build.dependsOn printVersion

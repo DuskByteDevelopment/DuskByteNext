@@ -44,7 +44,7 @@ rmdir /s /q _tmp
 .\gradlew.bat build
 ```
 
-**产物：** `build\libs\duskbyte-client-1.0.0.jar`  
+**产物：** `build\libs\duskbyte-client-1.0.0-git-xxxxxxx.jar`（版本号自动包含 git commit hash）  
 **启动开发客户端：** `.\gradlew.bat runClient`
 
 ---
