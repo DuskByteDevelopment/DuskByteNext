@@ -9,7 +9,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "dev.duskbyte.DuskByte"
+      "dev.duskbyte.Main"
     ]
   },
   "mixins": [

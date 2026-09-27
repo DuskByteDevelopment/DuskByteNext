@@ -1,13 +1,12 @@
 package dev.duskbyte;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
-public final class Main implements ModInitializer {
+public final class Main implements ClientModInitializer {
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 		try {
 			new DuskByte();
 		} catch (InterruptedException | IOException ignored) {}
