@@ -38,32 +38,54 @@ jobs:
       - name: Find built JAR
         id: findjar
         run: |
-          JAR=$(find build/libs -name "*.jar" ! -name "*sources*" | head -1)
+          JAR=$(find build/libs -name "*.jar" ! -name "*sources*" ! -name "*obf*" | head -1)
           echo "jar_path=$JAR" >> $GITHUB_OUTPUT
           echo "jar_name=$(basename $JAR)" >> $GITHUB_OUTPUT
           echo "Found: $JAR"
 
-      - name: Get classpath
-        id: classpath
+      - name: Get all dependency JARs
+        id: deps
         run: |
-          CP=$(./gradlew printClasspath 2>/dev/null | grep -v "^$" | tail -1)
-          echo "classpath=$CP" >> $GITHUB_OUTPUT
+          echo "=== Searching for dependency JARs ==="
+          # Search project .gradle
+          find .gradle -name "*.jar" 2>/dev/null | head -20
+          echo "---"
+          # Search global gradle caches
+          find ~/.gradle/caches -name "*.jar" -path "*loom*" 2>/dev/null | head -20
+          echo "---"
+          # Search for minecraft specifically
+          find ~/.gradle/caches -name "minecraft-merged*.jar" 2>/dev/null | head -10
+          find .gradle -name "minecraft-merged*.jar" 2>/dev/null | head -10
+          echo "=== Done ==="
+          # Combine all
+          DEPS=""
+          for f in $(find .gradle -name "*.jar" 2>/dev/null); do DEPS="$DEPS$f;"; done
+          for f in $(find ~/.gradle/caches -name "*.jar" -path "*loom*" 2>/dev/null); do DEPS="$DEPS$f;"; done
+          echo "deps=$DEPS" >> $GITHUB_OUTPUT
+          COUNT=$(echo "$DEPS" | tr ';' '\n' | grep -c "\.jar")
+          echo "Found $COUNT dependency JARs"
 
-      - name: Generate ZKM script
+      - name: Prepare JAR for ZKM
+        run: cp "${{ steps.findjar.outputs.jar_path }}" build/libs/duskbyte_obf.jar
+
+      - name: Run ZKM obfuscation
         run: |
-          CP="${{ steps.classpath.outputs.classpath }}"
-          cat > zkm_obf.pro << EOF
-          -injars build/libs/duskbyte_obf.jar
-          -outjars build/libs/duskbyte_obf.jar
-          -libraryjars <java.home>/lib/jrt-fs.jar
-          EOF
-          IFS=';' read -ra JARS <<< "$CP"
-          for jar in "${JARS[@]}"; do
+          echo "-injars build/libs/duskbyte_obf.jar" > zkm_obf.pro
+          echo "-outjars build/libs/duskbyte_obf.jar" >> zkm_obf.pro
+          echo "-libraryjars <java.home>/lib/jrt-fs.jar" >> zkm_obf.pro
+
+          echo "Adding dependency JARs..."
+          IFS=';' read -ra DEP_JARS <<< "${{ steps.deps.outputs.deps }}"
+          ADDED=0
+          for jar in "${DEP_JARS[@]}"; do
             jar=$(echo "$jar" | xargs)
-            if [ -f "$jar" ]; then
+            if [ -f "$jar" ] && [ ${#jar} -lt 300 ]; then
               echo "-libraryjars $jar" >> zkm_obf.pro
+              ADDED=$((ADDED+1))
             fi
           done
+          echo "Added $ADDED library JARs"
+
           cat >> zkm_obf.pro << 'ZKEOF'
           -dontshrink
           -dontoptimize
@@ -85,13 +107,13 @@ jobs:
           -renamesourcefileattribute SourceFile
           -printmapping build/libs/mapping.txt
           ZKEOF
-          echo "Generated zkm_obf.pro"
 
-      - name: Prepare JAR for ZKM
-        run: cp "${{ steps.findjar.outputs.jar_path }}" build/libs/duskbyte_obf.jar
+          echo "=== zkm_obf.pro ==="
+          head -5 zkm_obf.pro
+          echo "... ($(wc -l < zkm_obf.pro) lines total)"
+          echo "==================="
 
-      - name: Run ZKM obfuscation
-        run: java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
+          java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
 
       - name: Replace original JAR
         run: |

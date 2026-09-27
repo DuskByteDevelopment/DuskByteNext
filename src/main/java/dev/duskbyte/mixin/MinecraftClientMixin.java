@@ -36,14 +36,12 @@ public class MinecraftClientMixin {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void onTick(CallbackInfo ci) {
-		// 第一次 tick 时检查认证状态
-		if (!duskbyte_authChecked && DuskByte.INSTANCE != null) {
-			duskbyte_authChecked = true;
-			if (!DuskByte.INSTANCE.authenticated) {
-				MinecraftClient mc = (MinecraftClient) (Object) this;
-				if (mc.currentScreen == null) {
-					mc.execute(() -> mc.setScreen(new AuthScreen()));
-				}
+		MinecraftClient mc = (MinecraftClient) (Object) this;
+
+		// 未登录 → 强制弹 AuthScreen，挡住所有操作
+		if (DuskByte.INSTANCE != null && !DuskByte.INSTANCE.authenticated) {
+			if (!(mc.currentScreen instanceof dev.duskbyte.gui.AuthScreen)) {
+				mc.setScreen(new AuthScreen());
 			}
 		}
 
