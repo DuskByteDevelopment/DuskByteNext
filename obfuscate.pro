@@ -1,0 +1,22 @@
+-injars build/libs/duskbyte_obf.jar
+-outjars build/libs/duskbyte_obf.jar
+-libraryjars <java.home>/lib/jrt-fs.jar
+-dontshrink
+-dontoptimize
+-keep public class dev.duskbyte.Main { *; }
+-keep class dev.duskbyte.mixin.** { *; }
+-keep class dev.duskbyte.imixin.** { *; }
+-keep class dev.duskbyte.DuskByte { public *; protected *; public static *; }
+-keep class dev.duskbyte.event.** { *; }
+-keep class dev.duskbyte.module.modules.** { public <init>(); }
+-keep class dev.duskbyte.gui.** { public <init>(...); }
+-keep class dev.duskbyte.managers.cloud.** { *; }
+-keep class dev.duskbyte.managers.AuthManager { *; }
+-keep class dev.duskbyte.managers.TranslationManager { *; }
+-keep class net.fabricmc.** { *; }
+-keep class com.google.gson.** { *; }
+-optimizationpasses 3
+-repackageclasses
+-allowaccessmodification
+-renamesourcefileattribute SourceFile
+-printmapping build/libs/mapping.txt

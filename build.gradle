@@ -67,4 +67,10 @@ tasks.named('sourcesJar') {
 task printVersion {
     doFirst { println "Building DuskByteClient v${project.version}" }
 }
+task printClasspath {
+    doFirst {
+        def cp = sourceSets.main.compileClasspath.files.collect { it.absolutePath }.join(';')
+        println cp
+    }
+}
 build.dependsOn printVersion
