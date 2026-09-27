@@ -83,7 +83,7 @@ public final class HUD extends Module implements HudListener {
 						ping += "N/A |";
 					}
 
-					RenderUtils.renderRoundedQuad(context, new Color(35, 35, 35, 255), 5, 6, duskbyteOffset2 + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + TextRenderer.getWidth(server) + 35, 30, 5, 15);
+					RenderUtils.renderRoundedQuad(context.getMatrices(), new Color(35, 35, 35, 255), 5, 6, duskbyteOffset2 + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + TextRenderer.getWidth(server) + 35, 30, 5, 15);
 
 					TextRenderer.drawString(BRAND, context, duskbyteOffset, 12, Utils.getMainColor(255, 4).getRGB());
 					duskbyteOffset += TextRenderer.getWidth(BRAND);
@@ -100,7 +100,7 @@ public final class HUD extends Module implements HudListener {
 						RenderUtils.unscaledProjection();
 						int charOffset = 6 + TextRenderer.getWidth(module.getName());
 
-						RenderUtils.renderRoundedQuad(context, new Color(0, 0, 0, 175), 0, offset - 4, (charOffset + 5), offset + (mc.textRenderer.fontHeight * 2) - 1, 0, 0, 0, 5, 10);
+						RenderUtils.renderRoundedQuad(context.getMatrices(), new Color(0, 0, 0, 175), 0, offset - 4, (charOffset + 5), offset + (mc.textRenderer.fontHeight * 2) - 1, 0, 0, 0, 5, 10);
 						context.fillGradient(0, offset - 4, 2, offset + (mc.textRenderer.fontHeight * 2), Utils.getMainColor(255, (enabledModules.indexOf(module))).getRGB(), Utils.getMainColor(255, (enabledModules.indexOf(module)) + 1).getRGB());
 
 						TextRenderer.drawString(module.getName(), context, 8, offset, Utils.getMainColor(255, (enabledModules.indexOf(module))).getRGB());
