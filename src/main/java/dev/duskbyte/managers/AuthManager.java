@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.managers.cloud.CloudApiClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.nio.file.Files;
 public final class AuthManager {
     private static AuthManager INSTANCE;
     private static final Gson GSON = new Gson();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthManager.class);
     private boolean authenticated = false;
     private String username = null;
     private String email = null;
@@ -110,7 +113,9 @@ public final class AuthManager {
      */
     public boolean tryAutoLogin() {
         String savedToken = loadToken();
-        if (savedToken == null || savedToken.isEmpty()) return false;
+        boolean hasToken = savedToken != null && !savedToken.isEmpty();
+        LOGGER.info("[Auth] saved token present: {}", hasToken);
+        if (!hasToken) return false;
 
         CloudApiClient api = DuskByte.INSTANCE.cloudApiClient;
         api.setAuthToken(savedToken);
@@ -119,6 +124,7 @@ public final class AuthManager {
         // 之前写成 /api/auth/me 会打到 /api/api/auth/me → 404 → 每次启动都把
         // 保存的 token 删掉,导致"登录了下次还要重新登录"。
         CloudApiClient.CloudResponse me = api.request("GET", "/auth/me", null, true);
+        LOGGER.info("[Auth] GET /auth/me -> HTTP {}", me.statusCode);
         if (me.success) {
             try {
                 JsonObject data = me.toJson();
@@ -136,18 +142,22 @@ public final class AuthManager {
                     this.userId = (user.has("id") && user.get("id").isJsonPrimitive())
                             ? user.get("id").getAsInt() : -1;
                     DuskByte.INSTANCE.authenticated = true;
+                    LOGGER.info("[Auth] auto-login OK, user={}", this.username);
                     return true;
                 }
 
                 // 200 但拿不到用户信息 → token 无效,删掉
+                LOGGER.info("[Auth] auto-login failed: 200 but no user info, clearing token");
                 deleteToken();
                 return false;
             } catch (Exception e) {
                 // token 过期了
+                LOGGER.info("[Auth] auto-login failed: bad response ({}), clearing token", e.toString());
                 deleteToken();
                 return false;
             }
         } else {
+            LOGGER.info("[Auth] auto-login rejected (HTTP {}), clearing token", me.statusCode);
             deleteToken();
             return false;
         }

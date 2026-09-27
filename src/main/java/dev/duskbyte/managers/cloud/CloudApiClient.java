@@ -14,6 +14,7 @@ import java.util.Map;
 public final class CloudApiClient {
     private static CloudApiClient INSTANCE;
     private static final String BASE_URL = "https://dbapi.3d3k.org/api";
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CloudApiClient.class);
     private final Gson gson = new Gson();
 
     private String authToken = null;
@@ -177,8 +178,9 @@ public final class CloudApiClient {
     }
 
     public CloudResponse request(String method, String path, String body, boolean withAuth) {
+        URL url = null;
         try {
-            URL url = new URL(BASE_URL + path);
+            url = new URL(BASE_URL + path);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
             conn.setRequestProperty("Content-Type", "application/json");
@@ -197,6 +199,9 @@ public final class CloudApiClient {
             }
 
             int statusCode = conn.getResponseCode();
+            // 只记 URL 与状态码,不记响应体(避免 token 泄漏进日志)
+            LOGGER.info("[Cloud] {} {} -> HTTP {}", method, url, statusCode);
+
             InputStream is = (statusCode >= 200 && statusCode < 300)
                     ? conn.getInputStream()
                     : conn.getErrorStream();
@@ -215,6 +220,7 @@ public final class CloudApiClient {
 
             return new CloudResponse(statusCode, responseText);
         } catch (Exception e) {
+            LOGGER.warn("[Cloud] {} {} failed: {}", method, url, e.toString());
             return new CloudResponse(-1, "{\"error\":\"" + e.getMessage() + "\"}");
         }
     }

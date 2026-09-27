@@ -32,6 +32,8 @@ import java.util.concurrent.CountDownLatch;
  * 未登录直接关闭窗口 = 退出游戏。
  */
 public final class AuthDialog {
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AuthDialog.class);
+
     private static final Color COLOR_ERROR = new Color(200, 40, 40);
     private static final Color COLOR_OK = new Color(30, 140, 60);
     private static final Color COLOR_BUSY = new Color(160, 110, 0);
@@ -45,12 +47,25 @@ public final class AuthDialog {
      * @return true = 已认证,可以继续加载游戏
      */
     public static boolean promptBlocking() {
-        if (DuskByte.INSTANCE != null && DuskByte.INSTANCE.authenticated) {
+        boolean authed = DuskByte.INSTANCE != null && DuskByte.INSTANCE.authenticated;
+        LOGGER.info("[AuthDialog] promptBlocking: auto-login authenticated={}, headless={}",
+                authed, java.awt.GraphicsEnvironment.isHeadless());
+        if (authed) {
             return true; // 自动登录成功,不需要弹窗
         }
 
         CountDownLatch latch = new CountDownLatch(1);
-        SwingUtilities.invokeLater(() -> show(latch));
+        SwingUtilities.invokeLater(() -> {
+            try {
+                LOGGER.info("[AuthDialog] showing login dialog");
+                show(latch);
+                LOGGER.info("[AuthDialog] login dialog closed");
+            } catch (Throwable t) {
+                // EDT 上的任何异常都会导致窗口不出现且主线程永久等待,必须兜底放行
+                LOGGER.error("[AuthDialog] failed to show login dialog", t);
+                latch.countDown();
+            }
+        });
 
         try {
             latch.await();
@@ -58,7 +73,9 @@ public final class AuthDialog {
             Thread.currentThread().interrupt();
         }
 
-        return DuskByte.INSTANCE != null && DuskByte.INSTANCE.authenticated;
+        boolean ok = DuskByte.INSTANCE != null && DuskByte.INSTANCE.authenticated;
+        LOGGER.info("[AuthDialog] promptBlocking finished, authenticated={}", ok);
+        return ok;
     }
 
     private static void show(CountDownLatch latch) {
@@ -153,22 +170,26 @@ public final class AuthDialog {
                 String error;
                 try {
                     AuthManager auth = AuthManager.getInstance();
-                    CloudApiClient.CloudResponse response = register
-                            ? auth.register(username, email, password)
-                            : auth.login(username, password);
+                    if (auth == null) {
+                        error = "内部错误: 客户端未初始化";
+                    } else {
+                        CloudApiClient.CloudResponse response = register
+                                ? auth.register(username, email, password)
+                                : auth.login(username, password);
 
-                    if (auth.isAuthenticated()) {
-                        SwingUtilities.invokeLater(() -> {
-                            statusLabel.setForeground(COLOR_OK);
-                            statusLabel.setText("成功，正在启动游戏...");
-                            // 短暂停留让用户看到成功提示,再放行游戏加载
-                            javax.swing.Timer timer = new javax.swing.Timer(400, ev -> finish.run());
-                            timer.setRepeats(false);
-                            timer.start();
-                        });
-                        return;
+                        if (auth.isAuthenticated()) {
+                            SwingUtilities.invokeLater(() -> {
+                                statusLabel.setForeground(COLOR_OK);
+                                statusLabel.setText("成功，正在启动游戏...");
+                                // 短暂停留让用户看到成功提示,再放行游戏加载
+                                javax.swing.Timer timer = new javax.swing.Timer(400, ev -> finish.run());
+                                timer.setRepeats(false);
+                                timer.start();
+                            });
+                            return;
+                        }
+                        error = describeError(response);
                     }
-                    error = describeError(response);
                 } catch (Exception e) {
                     error = "网络错误: " + e.getMessage();
                 }
@@ -215,7 +236,9 @@ public final class AuthDialog {
         dialog.getContentPane().add(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(null);
+        dialog.setAlwaysOnTop(true); // 防止被其它窗口(如游戏窗口)遮挡
         dialog.setVisible(true);
+        dialog.toFront();
         userField.requestFocusInWindow();
     }
 
