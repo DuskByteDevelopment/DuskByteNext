@@ -2,10 +2,14 @@
 -outjars build/libs/duskbyte_obf.jar
 -libraryjars <java.home>/lib/jrt-fs.jar
 
-# 关键修复:必须保留这些 class 文件属性,否则 Mixin/Fabric 在运行时找不到
-# @Mixin、@Inject、@Environment 等注解,直接崩溃("missing an @Mixin annotation")。
-# Signature 同样要保留,否则涉及泛型的 Mixin 注入点解析也会出问题。
--keepattributes RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations,RuntimeVisibleParameterAnnotations,RuntimeInvisibleParameterAnnotations,AnnotationDefault,Signature,InnerClasses,EnclosingMethod,Exceptions
+# 背景: 如果注解在混淆时被裁剪,运行时会报 "missing an @Mixin annotation" 崩溃,
+# 因此曾尝试添加 -keepattributes —— 但不能这么写:
+# ZKM 27.0.0 的 ProGuard 翻译器会把它翻译成
+# "keepAnnotations" 选项,但该版本脚本解析器不接受该选项,会直接抛
+# ZkmScriptParseException(While parsing "obfuscate" statement),导致 ZKM 无法启动。
+# 已启用 -dontshrink/-dontoptimize,ZKM 只做重命名,不会裁剪注解属性;
+# CI 的 "Diagnose annotation stripping" 步骤会用 javap 校验混淆后
+# @Mixin 等 RuntimeVisibleAnnotations 是否仍然保留。
 
 -dontshrink
 -dontoptimize

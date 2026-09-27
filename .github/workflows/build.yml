@@ -29,19 +29,23 @@ jobs:
         with:
           gradle-version: '8.8'
 
-      - name: Build
+      - name: Build (named dev JAR only)
         shell: pwsh
         run: |
           gradle wrapper --gradle-version 8.8
-          .\gradlew.bat clean build
+          # 只跑 :jar —— Loom 1.7 会把 yarn named 字节码输出到 build/devlibs/*-dev.jar
+          # (build/libs 下的是 :remapJar 的 intermediary 产物,命名空间和 named
+          #  libraryjars 不一致,ZKM 会报 getVertexSorting 之类的方法找不到)。
+          # ZKM 混淆 named jar,之后再单独跑 :remapJar 转成最终的 intermediary 产物。
+          .\gradlew.bat clean jar
       - name: Find built JAR
         id: findjar
         shell: pwsh
         run: |
-          $jar = Get-ChildItem build/libs -Filter *.jar |
+          $jar = Get-ChildItem build/devlibs -Filter *.jar |
                  Where-Object { $_.Name -notmatch 'sources' -and $_.Name -notmatch 'obf' } |
                  Select-Object -First 1
-          if (-not $jar) { Write-Error "no jar found"; exit 1 }
+          if (-not $jar) { Write-Error "no named (dev) jar found in build/devlibs"; exit 1 }
           "jar=$($jar.FullName)" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
           Write-Host "Found: $($jar.FullName)"
       - name: Collect classpath from Gradle
@@ -56,18 +60,15 @@ jobs:
         shell: pwsh
         run: |
           Copy-Item "${{ steps.findjar.outputs.jar }}" build/libs/duskbyte_obf.jar -Force
+          # injar 现在是 :jar 的 named 字节码,libraryjars 必须保持 named 形式且保持原顺序
+          # (cp.txt 里 named 的 minecraft-merged jar 排在前面,ZKM 优先解析到它)。
+          # 不要按 'intermediary' 过滤、也不要 Sort 重排,否则会引入命名空间不一致。
           $libs = Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } |
               Where-Object { $_ -and (Test-Path $_) } |
-              # 关键修复:minecraft-merged 系列 jar 有 named / intermediary 两种变体,
-              # 且经常在项目本地缓存和全局 Gradle 缓存里各存一份、互相重复。
-              # 你打出的字节码是 intermediary 形式(class_XXXX),所以这里只保留
-              # intermediary 版本,把 named 版本(方法参数是真实类名,比如 VertexSorter)
-              # 排除掉,避免 ZKM 先匹配到 named 版而报"找不到方法"。
-              Where-Object { ($_ -notmatch 'minecraft-merged') -or ($_ -match 'intermediary') } |
-              Sort-Object -Unique |
               ForEach-Object { "-libraryjars `"$($_.Replace('\','/'))`"" }
-          Write-Host "===== 过滤后保留的 minecraft-merged 相关条目 ====="
-          $libs | Where-Object { $_ -match 'minecraft-merged' } | ForEach-Object { Write-Host $_ }
+          Write-Host "===== cp.txt 中的 minecraft-merged 条目(按此顺序供 ZKM 解析) ====="
+          Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } |
+              Where-Object { $_ -match 'minecraft-merged' } | ForEach-Object { Write-Host $_ }
           $head = @(
               '-injars "build/libs/duskbyte_obf.jar"',
               '-outjars "build/libs/duskbyte_obf.jar"',
@@ -163,6 +164,14 @@ jobs:
           Remove-Item build/libs/*sources*.jar -ErrorAction SilentlyContinue
           Copy-Item build/libs/duskbyte_obf.jar $out -Force
           Remove-Item build/libs/duskbyte_obf.jar -ErrorAction SilentlyContinue
+
+      # 把混淆后的 named jar 重映射成最终的 intermediary 产物(build/libs/*.jar)。
+      # 必须 -x jar:我们改写了 :jar 的输出文件,Gradle 会认为 :jar 输出过期而重跑,
+      # 重跑会用未混淆的 class 把混淆结果覆盖掉。
+      - name: Remap obfuscated JAR to intermediary (final artifact)
+        shell: pwsh
+        run: .\gradlew.bat remapJar -x jar
+
       - name: Upload obfuscated JAR
         uses: actions/upload-artifact@v4
         with:
