@@ -253,8 +253,10 @@ public final class AuthDialog {
     }
 
     private static String describeError(CloudApiClient.CloudResponse response) {
-        String error = response.getError();
-        if (error == null || error.isEmpty()) error = response.getMessage();
+        // 服务端 500 时 error 是笼统的 "Internal Server Error",
+        // 真正的原因在 message 里(如 "no such table: users"),优先显示它
+        String error = response.getMessage();
+        if (error == null || error.isEmpty()) error = response.getError();
         if (error == null || error.isEmpty()) error = "HTTP " + response.statusCode;
         return error;
     }

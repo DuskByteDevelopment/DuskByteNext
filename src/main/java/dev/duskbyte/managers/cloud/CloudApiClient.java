@@ -199,7 +199,7 @@ public final class CloudApiClient {
             }
 
             int statusCode = conn.getResponseCode();
-            // 只记 URL 与状态码,不记响应体(避免 token 泄漏进日志)
+            // 只记 URL 与状态码,不记成功响应体(避免 token 泄漏进日志)
             LOGGER.info("[Cloud] {} {} -> HTTP {}", method, url, statusCode);
 
             InputStream is = (statusCode >= 200 && statusCode < 300)
@@ -216,6 +216,12 @@ public final class CloudApiClient {
                     }
                     responseText = sb.toString();
                 }
+            }
+
+            // 错误响应(4xx/5xx)没有 token,记下原始 body 方便定位服务端问题
+            if (statusCode >= 400) {
+                String shown = responseText.length() > 500 ? responseText.substring(0, 500) + "..." : responseText;
+                LOGGER.warn("[Cloud] {} {} -> HTTP {} body: {}", method, url, statusCode, shown);
             }
 
             return new CloudResponse(statusCode, responseText);
