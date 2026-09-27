@@ -3,6 +3,7 @@ package dev.duskbyte.mixin;
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.EventManager;
 import dev.duskbyte.event.events.*;
+import dev.duskbyte.gui.AuthScreen;
 import dev.duskbyte.utils.MouseSimulation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Window;
@@ -27,8 +28,25 @@ public class MinecraftClientMixin {
 	@Final
 	private Window window;
 
+	@Shadow
+	@Nullable
+	public net.minecraft.client.gui.screen.Screen currentScreen;
+
+	private boolean duskbyte_authChecked = false;
+
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void onTick(CallbackInfo ci) {
+		// 第一次 tick 时检查认证状态
+		if (!duskbyte_authChecked && DuskByte.INSTANCE != null) {
+			duskbyte_authChecked = true;
+			if (!DuskByte.INSTANCE.authenticated) {
+				MinecraftClient mc = (MinecraftClient) (Object) this;
+				if (mc.currentScreen == null) {
+					mc.execute(() -> mc.setScreen(new AuthScreen()));
+				}
+			}
+		}
+
 		if (world != null) {
 			TickListener.TickEvent event = new TickListener.TickEvent();
 

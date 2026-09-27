@@ -3,6 +3,7 @@ package dev.duskbyte.module;
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.events.ButtonListener;
 import dev.duskbyte.module.modules.client.ClickGUI;
+import dev.duskbyte.module.modules.client.CNLang;
 import dev.duskbyte.module.modules.client.Friends;
 import dev.duskbyte.module.modules.client.SelfDestruct;
 import dev.duskbyte.module.modules.combat.*;
@@ -66,6 +67,7 @@ public final class ModuleManager implements ButtonListener {
 		add(new ClickGUI());
 		add(new Friends());
 		add(new SelfDestruct());
+		add(new CNLang());
 	}
 
 	public List<Module> getEnabledModules() {

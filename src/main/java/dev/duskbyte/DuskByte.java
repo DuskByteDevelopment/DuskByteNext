@@ -2,7 +2,10 @@ package dev.duskbyte;
 
 import dev.duskbyte.event.EventManager;
 import dev.duskbyte.gui.ClickGui;
+import dev.duskbyte.managers.AuthManager;
 import dev.duskbyte.managers.FriendManager;
+import dev.duskbyte.managers.TranslationManager;
+import dev.duskbyte.managers.cloud.CloudApiClient;
 import dev.duskbyte.module.ModuleManager;
 import dev.duskbyte.managers.ProfileManager;
 import dev.duskbyte.utils.rotation.RotatorManager;
@@ -20,11 +23,15 @@ public final class DuskByte {
 	public ModuleManager moduleManager;
 	public EventManager eventManager;
 	public FriendManager friendManager;
+	public TranslationManager translationManager;
+	public CloudApiClient cloudApiClient;
+	public AuthManager authManager;
 	public static MinecraftClient mc;
 	public String version = " b1.3";
 	public static boolean BETA; //this was for beta kids but ablue never made it a reality, and you basically paid extra 10 bucks for nothing while ablue spent it all on war thunder to buy pre-historic tanks and estrogen 🤡🤡🤡
 	public static DuskByte INSTANCE;
 	public boolean guiInitialized;
+	public boolean authenticated = false;
 	public ClickGui clickGui;
 	public Screen previousScreen = null;
 	public long lastModified;
@@ -38,6 +45,12 @@ public final class DuskByte {
 		this.rotatorManager = new RotatorManager();
 		this.profileManager = new ProfileManager();
 		this.friendManager = new FriendManager();
+		this.translationManager = new TranslationManager();
+		this.cloudApiClient = new CloudApiClient();
+		this.authManager = new AuthManager();
+
+		// 尝试用本地 token 自动登录
+		this.authenticated = this.authManager.tryAutoLogin();
 
 		this.getProfileManager().loadProfile();
 		this.setLastModified();

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "duskbyte",
-  "version": "DuskByte-1337",
+  "version": "DuskByte-1337 for 1.21 | Heavy Duty Protection😂",
   "name": "DuskByte",
-  "description": "DuskByte Client - Inspired by Argon",
-  "authors": ["DuskByte"],
+  "description": "DuskByte Client - An Ghost Client For Block Game",
+  "authors": ["Zhouyi2013"],
   "license": "GPL-3.0",
   "environment": "client",
   "entrypoints": {
