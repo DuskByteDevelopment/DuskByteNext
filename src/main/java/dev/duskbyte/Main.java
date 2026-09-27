@@ -10,6 +10,11 @@ public final class Main implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		// 必须在任何 AWT/Swing 类初始化之前执行:
+		// 启动器可能带了 -Djava.awt.headless=true,不覆盖掉的话 JDialog 会抛
+		// HeadlessException("不弹登录窗口")。GraphicsEnvironment 只在首次加载时读取该属性。
+		System.setProperty("java.awt.headless", "false");
+
 		LOGGER.info("client entrypoint started");
 
 		try {
@@ -28,8 +33,9 @@ public final class Main implements ClientModInitializer {
 		boolean ok = AuthDialog.promptBlocking();
 		LOGGER.info("promptBlocking returned {}", ok);
 		if (!ok) {
-			LOGGER.error("login did not complete, exiting");
-			System.exit(0);
+			// JDialog 彻底弹不出来时不退出游戏,放行加载,
+			// 由 MinecraftClientMixin 兜底的游戏内 AuthScreen 完成登录
+			LOGGER.warn("JDialog login unavailable, falling back to in-game auth screen");
 		}
 	}
 }

@@ -47,11 +47,21 @@ public final class AuthDialog {
      * @return true = 已认证,可以继续加载游戏
      */
     public static boolean promptBlocking() {
+        // 双保险:即使调用方忘了设置,也在 AWT 初始化前把 headless 关掉
+        System.setProperty("java.awt.headless", "false");
+
         boolean authed = DuskByte.INSTANCE != null && DuskByte.INSTANCE.authenticated;
-        LOGGER.info("[AuthDialog] promptBlocking: auto-login authenticated={}, headless={}",
-                authed, java.awt.GraphicsEnvironment.isHeadless());
+        boolean headless = java.awt.GraphicsEnvironment.isHeadless();
+        LOGGER.info("[AuthDialog] promptBlocking: auto-login authenticated={}, headless={}", authed, headless);
         if (authed) {
             return true; // 自动登录成功,不需要弹窗
+        }
+        if (headless) {
+            // AWT 已经以 headless 模式完成初始化,Swing 窗口弹不出来:
+            // 放行游戏加载,由 MinecraftClientMixin 兜底的游戏内 AuthScreen 完成登录
+            LOGGER.warn("[AuthDialog] AWT still headless, cannot show Swing dialog; "
+                    + "falling back to in-game auth screen");
+            return true;
         }
 
         CountDownLatch latch = new CountDownLatch(1);

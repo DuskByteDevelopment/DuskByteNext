@@ -3,6 +3,7 @@ package dev.duskbyte.mixin;
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.EventManager;
 import dev.duskbyte.event.events.*;
+import dev.duskbyte.gui.AuthScreen;
 import dev.duskbyte.utils.MouseSimulation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Window;
@@ -33,7 +34,17 @@ public class MinecraftClientMixin {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void onTick(CallbackInfo ci) {
-		// 登录已在游戏加载前由 AuthDialog(JDialog) 完成,这里不再强制弹登录界面
+		MinecraftClient mc = (MinecraftClient) (Object) this;
+
+		// 兜底登录: 正常情况登录在游戏加载前由 JDialog(AuthDialog) 完成,这里不会触发;
+		// 只有 AWT headless 导致 JDialog 弹不出来时,才在游戏内强制弹 AuthScreen,
+		// 直到登录成功。
+		if (DuskByte.INSTANCE != null && !DuskByte.INSTANCE.authenticated) {
+			if (!(mc.currentScreen instanceof AuthScreen)) {
+				mc.setScreen(new AuthScreen());
+			}
+		}
+
 		if (world != null) {
 			TickListener.TickEvent event = new TickListener.TickEvent();
 
