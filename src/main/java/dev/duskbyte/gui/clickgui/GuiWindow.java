@@ -58,8 +58,8 @@ public final class GuiWindow {
         if (currentColor.getAlpha() != targetAlpha)
             currentColor = ColorUtils.smoothAlphaTransition(0.05f, targetAlpha, currentColor);
 
-        // Window background with rounded corners
-        RenderUtils.renderRoundedQuad(ctx.getMatrices(), currentColor, prevX, prevY, prevX + width, prevY + height, 6, 50);
+        // Window background
+        ctx.fill(prevX, prevY, prevX + width, prevY + height, currentColor.getRGB());
 
         // Rainbow accent bar at bottom
         Color accent = ColorUtils.getMainColor(255, 0);

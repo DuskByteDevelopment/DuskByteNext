@@ -36,7 +36,7 @@ public class ModuleManager {
         modules.add(new FastPlace());
         modules.add(new AutoEat());
         modules.add(new AntiAFK());
-        modules.add(new Timer());
+        modules.add(new dev.duskbyte.module.misc.Timer());
         modules.add(new ChatSuffix());
         modules.add(new AutoEZ());
         modules.add(new AutoWeapon());

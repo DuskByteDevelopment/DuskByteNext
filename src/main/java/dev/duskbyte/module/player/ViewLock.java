@@ -20,7 +20,7 @@ public class ViewLock extends Module {
     @Override
     public void onTick() {
         if (mc.player == null || mc.currentScreen != null) return;
-        mc.player.setYaw((float) yaw.get());
-        mc.player.setPitch((float) pitch.get());
+        mc.player.setYaw(yaw.get().floatValue());
+        mc.player.setPitch(pitch.get().floatValue());
     }
 }

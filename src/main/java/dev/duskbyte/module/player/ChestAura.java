@@ -32,7 +32,7 @@ public class ChestAura extends Module {
         if (now - lastOpen < delay.get()) return;
 
         BlockPos playerPos = mc.player.getBlockPos();
-        int r = (int) range.get();
+        int r = range.get().intValue();
 
         for (int x = -r; x <= r; x++) {
             for (int y = -r; y <= r; y++) {
