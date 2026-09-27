@@ -53,7 +53,6 @@ public final class AuthScreen extends Screen {
         passwordField = new TextFieldWidget(this.textRenderer, centerX - fieldWidth / 2, centerY - 10, fieldWidth, fieldHeight, Text.of("Password"));
         passwordField.setPlaceholder(Text.of("密码 (至少6位)"));
         passwordField.setMaxLength(128);
-        passwordField.setSecret(true);
         this.addDrawableChild(passwordField);
 
         // Toggle mode button
