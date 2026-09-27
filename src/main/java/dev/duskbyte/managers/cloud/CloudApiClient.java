@@ -40,14 +40,7 @@ public final class CloudApiClient {
         CloudResponse response = post("/auth/register", body.toString(), false);
 
         if (response.success) {
-            try {
-                JsonObject data = response.toJson();
-                this.authToken = data.get("token").getAsString();
-                JsonObject user = data.getAsJsonObject("user");
-                this.userId = user.get("id").getAsInt();
-                this.username = user.get("username").getAsString();
-                this.email = user.get("email").getAsString();
-            } catch (Exception ignored) {}
+            parseAuthPayload(response);
         }
 
         return response;
@@ -61,17 +54,39 @@ public final class CloudApiClient {
         CloudResponse response = post("/auth/login", body.toString(), false);
 
         if (response.success) {
-            try {
-                JsonObject data = response.toJson();
-                this.authToken = data.get("token").getAsString();
-                JsonObject user = data.getAsJsonObject("user");
-                this.userId = user.get("id").getAsInt();
-                this.username = user.get("username").getAsString();
-                this.email = user.get("email").getAsString();
-            } catch (Exception ignored) {}
+            parseAuthPayload(response);
         }
 
         return response;
+    }
+
+    /**
+     * 解析登录/注册响应,兼容三种常见结构:
+     * 1) {"token":"...", "user":{...}}
+     * 2) {"data":{"token":"...", "user":{...}}}
+     * 3) {"token":"...", "username":"...", ...}(用户字段在根上)
+     */
+    private void parseAuthPayload(CloudResponse response) {
+        try {
+            JsonObject data = response.toJson();
+            JsonObject payload = (data.has("data") && data.get("data").isJsonObject())
+                    ? data.getAsJsonObject("data") : data;
+
+            if (payload.has("token") && payload.get("token").isJsonPrimitive()) {
+                this.authToken = payload.get("token").getAsString();
+            }
+
+            JsonObject user = (payload.has("user") && payload.get("user").isJsonObject())
+                    ? payload.getAsJsonObject("user") : payload;
+
+            if (user.has("username") && user.get("username").isJsonPrimitive()) {
+                this.username = user.get("username").getAsString();
+                this.userId = (user.has("id") && user.get("id").isJsonPrimitive())
+                        ? user.get("id").getAsInt() : -1;
+                this.email = (user.has("email") && user.get("email").isJsonPrimitive())
+                        ? user.get("email").getAsString() : null;
+            }
+        } catch (Exception ignored) {}
     }
 
     public CloudResponse logout() {
@@ -235,7 +250,8 @@ public final class CloudApiClient {
 
         public String getString(String key) {
             JsonObject json = toJson();
-            return json.has(key) ? json.get(key).getAsString() : null;
+            // 值可能是嵌套对象(如 {"error":{"code":...}}),只取字符串类型,避免抛异常
+            return (json.has(key) && json.get(key).isJsonPrimitive()) ? json.get(key).getAsString() : null;
         }
 
         public String getMessage() { return getString("message"); }

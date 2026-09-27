@@ -3,7 +3,6 @@ package dev.duskbyte.mixin;
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.EventManager;
 import dev.duskbyte.event.events.*;
-import dev.duskbyte.gui.AuthScreen;
 import dev.duskbyte.utils.MouseSimulation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Window;
@@ -32,19 +31,9 @@ public class MinecraftClientMixin {
 	@Nullable
 	public net.minecraft.client.gui.screen.Screen currentScreen;
 
-	private boolean duskbyte_authChecked = false;
-
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void onTick(CallbackInfo ci) {
-		MinecraftClient mc = (MinecraftClient) (Object) this;
-
-		// 未登录 → 强制弹 AuthScreen，挡住所有操作
-		if (DuskByte.INSTANCE != null && !DuskByte.INSTANCE.authenticated) {
-			if (!(mc.currentScreen instanceof dev.duskbyte.gui.AuthScreen)) {
-				mc.setScreen(new AuthScreen());
-			}
-		}
-
+		// 登录已在游戏加载前由 AuthDialog(JDialog) 完成,这里不再强制弹登录界面
 		if (world != null) {
 			TickListener.TickEvent event = new TickListener.TickEvent();
 

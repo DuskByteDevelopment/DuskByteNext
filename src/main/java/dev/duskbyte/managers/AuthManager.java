@@ -52,7 +52,8 @@ public final class AuthManager {
         CloudApiClient api = DuskByte.INSTANCE.cloudApiClient;
         CloudApiClient.CloudResponse response = api.register(username, email, password);
 
-        if (response.success) {
+        // 必须真的拿到 token 才算注册成功,避免 HTTP 2xx 但响应体不带 token 时出现"假登录"
+        if (response.success && hasToken(api)) {
             this.authenticated = true;
             this.username = api.getUsername();
             this.email = api.getEmail();
@@ -71,7 +72,7 @@ public final class AuthManager {
         CloudApiClient api = DuskByte.INSTANCE.cloudApiClient;
         CloudApiClient.CloudResponse response = api.login(username, password);
 
-        if (response.success) {
+        if (response.success && hasToken(api)) {
             this.authenticated = true;
             this.username = api.getUsername();
             this.email = api.getEmail();
@@ -81,6 +82,11 @@ public final class AuthManager {
         }
 
         return response;
+    }
+
+    private static boolean hasToken(CloudApiClient api) {
+        String token = api.getAuthToken();
+        return token != null && !token.isEmpty();
     }
 
     /**
@@ -109,18 +115,33 @@ public final class AuthManager {
         CloudApiClient api = DuskByte.INSTANCE.cloudApiClient;
         api.setAuthToken(savedToken);
 
-        // 用 token 访问 /api/auth/me 验证是否还有效
-        CloudApiClient.CloudResponse me = api.request("GET", "/api/auth/me", null, true);
+        // 注意: BASE_URL 已经带 /api,这里必须写 /auth/me。
+        // 之前写成 /api/auth/me 会打到 /api/api/auth/me → 404 → 每次启动都把
+        // 保存的 token 删掉,导致"登录了下次还要重新登录"。
+        CloudApiClient.CloudResponse me = api.request("GET", "/auth/me", null, true);
         if (me.success) {
             try {
                 JsonObject data = me.toJson();
-                JsonObject user = data.getAsJsonObject("user");
-                this.authenticated = true;
-                this.username = user.get("username").getAsString();
-                this.email = user.get("email").getAsString();
-                this.userId = user.get("id").getAsInt();
-                DuskByte.INSTANCE.authenticated = true;
-                return true;
+                // 兼容 data 包裹 / user 包裹 / 直接返回用户字段 三种响应结构
+                JsonObject payload = (data.has("data") && data.get("data").isJsonObject())
+                        ? data.getAsJsonObject("data") : data;
+                JsonObject user = (payload.has("user") && payload.get("user").isJsonObject())
+                        ? payload.getAsJsonObject("user") : payload;
+
+                if (user.has("username") && user.get("username").isJsonPrimitive()) {
+                    this.authenticated = true;
+                    this.username = user.get("username").getAsString();
+                    this.email = (user.has("email") && user.get("email").isJsonPrimitive())
+                            ? user.get("email").getAsString() : null;
+                    this.userId = (user.has("id") && user.get("id").isJsonPrimitive())
+                            ? user.get("id").getAsInt() : -1;
+                    DuskByte.INSTANCE.authenticated = true;
+                    return true;
+                }
+
+                // 200 但拿不到用户信息 → token 无效,删掉
+                deleteToken();
+                return false;
             } catch (Exception e) {
                 // token 过期了
                 deleteToken();
