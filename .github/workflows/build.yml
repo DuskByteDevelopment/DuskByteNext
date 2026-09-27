@@ -58,7 +58,16 @@ jobs:
           Copy-Item "${{ steps.findjar.outputs.jar }}" build/libs/duskbyte_obf.jar -Force
           $libs = Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } |
               Where-Object { $_ -and (Test-Path $_) } |
+              # 关键修复:minecraft-merged 系列 jar 有 named / intermediary 两种变体,
+              # 且经常在项目本地缓存和全局 Gradle 缓存里各存一份、互相重复。
+              # 你打出的字节码是 intermediary 形式(class_XXXX),所以这里只保留
+              # intermediary 版本,把 named 版本(方法参数是真实类名,比如 VertexSorter)
+              # 排除掉,避免 ZKM 先匹配到 named 版而报"找不到方法"。
+              Where-Object { ($_ -notmatch 'minecraft-merged') -or ($_ -match 'intermediary') } |
+              Sort-Object -Unique |
               ForEach-Object { "-libraryjars `"$($_.Replace('\','/'))`"" }
+          Write-Host "===== 过滤后保留的 minecraft-merged 相关条目 ====="
+          $libs | Where-Object { $_ -match 'minecraft-merged' } | ForEach-Object { Write-Host $_ }
           $head = @(
               '-injars "build/libs/duskbyte_obf.jar"',
               '-outjars "build/libs/duskbyte_obf.jar"',
