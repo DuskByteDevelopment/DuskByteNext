@@ -4,7 +4,6 @@ color 0A
 
 echo ============================================================
 echo   DuskByte ZKM Obfuscation Script
-echo   Zelix KlassMaster 27.0.0
 echo ============================================================
 echo.
 
@@ -14,13 +13,6 @@ set TEMP_JAR=%BUILD_DIR%\duskbyte_obf.jar
 
 if not exist "%ZKM_JAR%" (
     echo [ERROR] ZKM not found: %ZKM_JAR%
-    echo Please place zkm27.jar in zkm\ folder
-    pause
-    exit /b 1
-)
-
-if not exist "%BUILD_DIR%" (
-    echo [ERROR] build\libs not found
     pause
     exit /b 1
 )
@@ -41,64 +33,28 @@ if "%INPUT_JAR%"=="" (
 echo Found: %INPUT_JAR%
 echo.
 
-echo [1/4] Getting classpath from Gradle...
+echo [1/5] Collecting classpath from Gradle...
 cd /d "%~dp0"
-set "CLASSPATH_LINE="
-for /f "delims=" %%C in ('call gradlew.bat printClasspath 2^>nul') do set "CLASSPATH_LINE=%%C"
-
-if "%CLASSPATH_LINE%"=="" (
-    echo [ERROR] Failed to get classpath
+call gradlew.bat -q printClasspath > "%TEMP%\db_cp.txt" 2>nul
+if not exist "%TEMP%\db_cp.txt" (
+    echo [ERROR] printClasspath failed
     pause
     exit /b 1
 )
-echo       OK
-echo.
 
-echo [2/4] Generating ZKM script...
-> "%TEMP%\zkm_obf.pro" (
-    echo -injars build\libs\duskbyte_obf.jar
-    echo -outjars build\libs\duskbyte_obf.jar
-    echo -libraryjars ^<java.home^>/lib/jrt-fs.jar
-)
-
-for %%J in (%CLASSPATH_LINE:;=%) do (
-    if exist "%%~J" (
-        >> "%TEMP%\zkm_obf.pro" echo -libraryjars %%~J
-    )
-)
-
->> "%TEMP%\zkm_obf.pro" (
-    echo -dontshrink
-    echo -dontoptimize
-    echo -keep public class dev.duskbyte.Main { *; }
-    echo -keep class dev.duskbyte.mixin.** { *; }
-    echo -keep class dev.duskbyte.imixin.** { *; }
-    echo -keep class dev.duskbyte.DuskByte { public *; protected *; public static *; }
-    echo -keep class dev.duskbyte.event.** { *; }
-    echo -keep class dev.duskbyte.module.modules.** { public ^<init^>(); }
-    echo -keep class dev.duskbyte.gui.** { public ^<init^>(...); }
-    echo -keep class dev.duskbyte.managers.cloud.** { *; }
-    echo -keep class dev.duskbyte.managers.AuthManager { *; }
-    echo -keep class dev.duskbyte.managers.TranslationManager { *; }
-    echo -keep class net.fabricmc.** { *; }
-    echo -keep class com.google.gson.** { *; }
-    echo -optimizationpasses 3
-    echo -repackageclasses
-    echo -allowaccessmodification
-    echo -renamesourcefileattribute SourceFile
-    echo -printmapping build\libs\mapping.txt
-)
-echo       OK
-echo.
-
-echo [3/4] Preparing JAR...
-copy "%INPUT_JAR%" "%TEMP_JAR%" >nul
+echo [2/5] Stripping nested jars (fixes ZKM mixin crash)...
+if exist "%INPUT_JAR%.bak" del "%INPUT_JAR%.bak">nul
 copy "%INPUT_JAR%" "%INPUT_JAR%.bak" >nul
+copy "%INPUT_JAR%" "%TEMP_JAR%" >nul
+if exist "%~dp0zkm_nested" rmdir /s /q "%~dp0zkm_nested"
+powershell -ExecutionPolicy Bypass -File "%~dp0zkm_strip_nested.ps1" -Jar "%TEMP_JAR%" -NestedDir "%~dp0zkm_nested"
 
-echo [4/4] Running ZKM (MAX obfuscation)...
+echo [3/5] Generating ZKM script...
+powershell -ExecutionPolicy Bypass -Command "$libs = Get-Content '%TEMP%\db_cp.txt' -Raw | %% { $_.Trim().Split(';') } | Where-Object { $_ -and (Test-Path $_) } | %% { ('-libraryjars \"{0}\"' -f $_.Replace('\','/')) }; $head = @('-injars \"build/libs/duskbyte_obf.jar\"','-outjars \"build/libs/duskbyte_obf.jar\"','-libraryjars \"<java.home>/lib/jrt-fs.jar\"'); $tail = (Get-Content '%~dp0obfuscate.pro' -Raw).Replace('\','/'); ($head + $libs + $tail) | Set-Content -Path '%TEMP%\zkm_obf.pro' -Encoding ascii"
+
+echo [4/5] Running ZKM (MAX obfuscation)...
 echo       Please wait...
 echo.
-
 java -Xmx2G -jar "%ZKM_JAR%" "%TEMP%\zkm_obf.pro"
 
 if errorlevel 1 (
@@ -110,6 +66,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
+echo [5/5] Restoring nested jars...
+powershell -ExecutionPolicy Bypass -File "%~dp0zkm_restore_nested.ps1" -Jar "%TEMP_JAR%" -NestedDir "%~dp0zkm_nested"
 copy "%TEMP_JAR%" "%INPUT_JAR%" >nul
 del "%TEMP_JAR%" >nul 2>nul
 
@@ -118,10 +76,8 @@ echo ============================================================
 echo   DONE!
 echo ============================================================
 echo.
-
 for %%A in ("%INPUT_JAR%.bak") do echo   Original:   %%~zA bytes
 for %%A in ("%INPUT_JAR%") do echo   Obfuscated: %%~zA bytes
 echo   Mapping:    build\libs\mapping.txt
 echo.
-
 pause

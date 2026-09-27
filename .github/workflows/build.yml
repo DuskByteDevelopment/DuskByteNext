@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -30,100 +30,69 @@ jobs:
           gradle-version: '8.8'
 
       - name: Build
+        shell: pwsh
         run: |
           gradle wrapper --gradle-version 8.8
-          chmod +x gradlew
-          ./gradlew build
+          .\gradlew.bat clean build
 
       - name: Find built JAR
         id: findjar
+        shell: pwsh
         run: |
-          JAR=$(find build/libs -name "*.jar" ! -name "*sources*" ! -name "*obf*" | head -1)
-          echo "jar_path=$JAR" >> $GITHUB_OUTPUT
-          echo "jar_name=$(basename $JAR)" >> $GITHUB_OUTPUT
-          echo "Found: $JAR"
+          $jar = Get-ChildItem build/libs -Filter *.jar |
+                 Where-Object { $_.Name -notmatch 'sources' -and $_.Name -notmatch 'obf' } |
+                 Select-Object -First 1
+          if (-not $jar) { Write-Error "no jar found"; exit 1 }
+          "jar=$($jar.FullName)" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+          Write-Host "Found: $($jar.FullName)"
 
-      - name: Get all dependency JARs
-        id: deps
+      - name: Collect classpath from Gradle
+        shell: pwsh
+        run: .\gradlew.bat -q printClasspath | Out-File -Encoding ascii cp.txt
+
+      - name: Strip nested jars (fix ZKM mixin crash)
+        shell: pwsh
+        run: .\zkm_strip_nested.ps1 -Jar "${{ steps.findjar.outputs.jar }}" -NestedDir "zkm_nested"
+
+      - name: Generate ZKM script
+        shell: pwsh
         run: |
-          echo "=== Searching for ALL dependency JARs ==="
-          # Find ALL jars in .gradle and ~/.gradle/caches
-          DEPS=""
-          for f in $(find .gradle -name "*.jar" 2>/dev/null); do DEPS="$DEPS$f;"; done
-          for f in $(find ~/.gradle/caches -name "*.jar" 2>/dev/null); do DEPS="$DEPS$f;"; done
-          echo "deps=$DEPS" >> $GITHUB_OUTPUT
-          COUNT=$(echo "$DEPS" | tr ';' '\n' | grep -c "\.jar")
-          echo "Found $COUNT dependency JARs"
+          Copy-Item "${{ steps.findjar.outputs.jar }}" build/libs/duskbyte_obf.jar -Force
+          $libs = Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } |
+              Where-Object { $_ -and (Test-Path $_) } |
+              ForEach-Object { "-libraryjars `"$($_.Replace('\','/'))`"" }
+          $head = @(
+              '-injars "build/libs/duskbyte_obf.jar"',
+              '-outjars "build/libs/duskbyte_obf.jar"',
+              '-libraryjars "<java.home>/lib/jrt-fs.jar"'
+          )
+          $tail = (Get-Content obfuscate.pro -Raw).Replace('\','/')
+          $all = $head + $libs + $tail
+          Set-Content -Path zkm_obf.pro -Value $all -Encoding ascii
+          Write-Host "library jars: $($libs.Count)"
 
-      - name: Prepare JAR for ZKM
-        run: cp "${{ steps.findjar.outputs.jar_path }}" build/libs/duskbyte_obf.jar
+      - name: Run ZKM
+        run: java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
 
-      - name: Run ZKM obfuscation
+      - name: Restore nested jars into obfuscated JAR
+        shell: pwsh
+        run: .\zkm_restore_nested.ps1 -Jar build/libs/duskbyte_obf.jar -NestedDir zkm_nested
+
+      - name: Replace original JAR with obfuscated one
+        shell: pwsh
         run: |
-          echo "-injars build/libs/duskbyte_obf.jar" > zkm_obf.pro
-          echo "-outjars build/libs/duskbyte_obf.jar" >> zkm_obf.pro
-          echo "-libraryjars <java.home>/lib/jrt-fs.jar" >> zkm_obf.pro
-
-          echo "Adding dependency JARs..."
-          IFS=';' read -ra DEP_JARS <<< "${{ steps.deps.outputs.deps }}"
-          ADDED=0
-          for jar in "${DEP_JARS[@]}"; do
-            jar=$(echo "$jar" | xargs)
-            if [ -f "$jar" ] && [ ${#jar} -lt 300 ]; then
-              echo "-libraryjars $jar" >> zkm_obf.pro
-              ADDED=$((ADDED+1))
-            fi
-          done
-          echo "Added $ADDED library JARs"
-
-          cat >> zkm_obf.pro << 'ZKEOF'
-          -dontshrink
-          -dontoptimize
-          -keep public class dev.duskbyte.Main { *; }
-          -keep class dev.duskbyte.mixin.** { *; }
-          -keep class dev.duskbyte.imixin.** { *; }
-          -keep class dev.duskbyte.DuskByte { public *; protected *; public static *; }
-          -keep class dev.duskbyte.event.** { *; }
-          -keep class dev.duskbyte.module.modules.** { public <init>(); }
-          -keep class dev.duskbyte.gui.** { public <init>(...); }
-          -keep class dev.duskbyte.managers.cloud.** { *; }
-          -keep class dev.duskbyte.managers.AuthManager { *; }
-          -keep class dev.duskbyte.managers.TranslationManager { *; }
-          -keep class net.fabricmc.** { *; }
-          -keep class com.google.gson.** { *; }
-          -optimizationpasses 3
-          -repackageclasses
-          -allowaccessmodification
-          -renamesourcefileattribute SourceFile
-          -printmapping build/libs/mapping.txt
-          ZKEOF
-
-          echo "=== zkm_obf.pro ==="
-          head -5 zkm_obf.pro
-          echo "... ($(wc -l < zkm_obf.pro) lines total)"
-          echo "==================="
-
-          java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
-
-      - name: Replace original JAR
-        run: |
-          cp build/libs/duskbyte_obf.jar "${{ steps.findjar.outputs.jar_path }}"
-          rm -f build/libs/duskbyte_obf.jar
+          $out = "${{ steps.findjar.outputs.jar }}"
+          Remove-Item build/libs/*sources*.jar -ErrorAction SilentlyContinue
+          Copy-Item build/libs/duskbyte_obf.jar $out -Force
+          Remove-Item build/libs/duskbyte_obf.jar -ErrorAction SilentlyContinue
 
       - name: Upload obfuscated JAR
         uses: actions/upload-artifact@v4
         with:
           name: DuskByte-Obfuscated-${{ github.sha }}
-          path: ${{ steps.findjar.outputs.jar_path }}
+          path: build/libs/*.jar
           retention-days: 30
           if-no-files-found: error
-
-      - name: Upload mapping
-        uses: actions/upload-artifact@v4
-        with:
-          name: DuskByte-Mapping-${{ github.sha }}
-          path: build/libs/mapping.txt
-          retention-days: 30
 
   release:
     needs: build
@@ -131,7 +100,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: Download obfuscated JAR
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: DuskByte-Obfuscated-${{ github.sha }}
