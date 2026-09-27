@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.render;
+package dev.duskbyte.module.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.duskbyte.event.events.GameRenderListener;

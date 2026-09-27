@@ -1,4 +1,4 @@
-﻿package dev.duskbyte;
+package dev.duskbyte;
 
 import dev.duskbyte.event.EventManager;
 import dev.duskbyte.gui.ClickGui;

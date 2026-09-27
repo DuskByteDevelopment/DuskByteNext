@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.client;
+package dev.duskbyte.module.modules.client;
 
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.events.PacketReceiveListener;

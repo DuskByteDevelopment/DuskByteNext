@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.combat;
+package dev.duskbyte.module.modules.combat;
 
 import dev.duskbyte.event.events.HudListener;
 import dev.duskbyte.event.events.MouseMoveListener;

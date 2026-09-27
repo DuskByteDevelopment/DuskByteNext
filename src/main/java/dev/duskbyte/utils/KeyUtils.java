@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils;
+package dev.duskbyte.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.glfw.GLFW;

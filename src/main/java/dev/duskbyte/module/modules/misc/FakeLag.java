@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.misc;
+package dev.duskbyte.module.modules.misc;
 
 import com.google.common.collect.Queues;
 import dev.duskbyte.event.events.PacketReceiveListener;

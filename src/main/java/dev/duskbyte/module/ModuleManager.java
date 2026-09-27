@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module;
+package dev.duskbyte.module;
 
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.events.ButtonListener;

@@ -1,4 +1,4 @@
-﻿package dev.duskbyte;
+package dev.duskbyte;
 
 import net.fabricmc.api.ModInitializer;
 

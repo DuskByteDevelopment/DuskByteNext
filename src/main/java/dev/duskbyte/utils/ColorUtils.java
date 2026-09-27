@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils;
+package dev.duskbyte.utils;
 
 import net.minecraft.util.math.MathHelper;
 

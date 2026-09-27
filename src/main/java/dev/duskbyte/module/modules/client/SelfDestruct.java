@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.client;
+package dev.duskbyte.module.modules.client;
 
 import com.sun.jna.Memory;
 import dev.duskbyte.DuskByte;

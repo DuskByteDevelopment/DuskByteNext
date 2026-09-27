@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.BlockEntityTickInvoker;

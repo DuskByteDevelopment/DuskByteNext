@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.render;
+package dev.duskbyte.module.modules.render;
 
 import dev.duskbyte.module.Category;
 import dev.duskbyte.module.Module;

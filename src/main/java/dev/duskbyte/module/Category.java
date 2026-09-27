@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module;
+package dev.duskbyte.module;
 public enum Category {
 	COMBAT("Combat"),
 	MISC("Misc"),

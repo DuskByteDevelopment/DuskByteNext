@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.util.math.Vec3d;

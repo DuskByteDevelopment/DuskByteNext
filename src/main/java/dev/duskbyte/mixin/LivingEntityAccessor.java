@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;

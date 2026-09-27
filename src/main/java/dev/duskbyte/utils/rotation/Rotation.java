@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils.rotation;
+package dev.duskbyte.utils.rotation;
 
 
 public record Rotation(double yaw, double pitch) {

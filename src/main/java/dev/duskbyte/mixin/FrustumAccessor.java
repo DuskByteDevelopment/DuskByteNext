@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import net.minecraft.client.render.Frustum;
 import org.joml.FrustumIntersection;

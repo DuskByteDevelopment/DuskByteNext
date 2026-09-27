@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.imixin;
+package dev.duskbyte.imixin;
 
 import net.minecraft.util.math.Vec3d;
 

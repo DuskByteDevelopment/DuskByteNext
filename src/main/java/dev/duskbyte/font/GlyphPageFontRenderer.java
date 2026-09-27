@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.font;
+package dev.duskbyte.font;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.render.*;

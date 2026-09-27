@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils;
+package dev.duskbyte.utils;
 
 public final class TimerUtils {
 	private long lastMS;

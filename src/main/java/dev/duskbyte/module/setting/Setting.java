@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.setting;
+package dev.duskbyte.module.setting;
 
 public abstract class Setting<T extends Setting<T>> {
 	private CharSequence name;

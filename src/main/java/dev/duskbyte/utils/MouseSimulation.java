@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils;
+package dev.duskbyte.utils;
 
 import dev.duskbyte.mixin.MinecraftClientAccessor;
 import dev.duskbyte.mixin.MouseHandlerAccessor;

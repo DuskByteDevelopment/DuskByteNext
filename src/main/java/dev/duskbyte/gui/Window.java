@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.gui;
+package dev.duskbyte.gui;
 
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.gui.components.ModuleButton;

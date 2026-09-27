@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.gui.components.settings;
+package dev.duskbyte.gui.components.settings;
 
 import dev.duskbyte.gui.components.ModuleButton;
 import dev.duskbyte.module.setting.BooleanSetting;

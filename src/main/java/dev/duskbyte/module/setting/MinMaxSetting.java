@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.setting;
+package dev.duskbyte.module.setting;
 
 import java.util.Random;
 

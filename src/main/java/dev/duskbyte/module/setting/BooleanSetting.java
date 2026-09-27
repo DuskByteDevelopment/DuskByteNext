@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.setting;
+package dev.duskbyte.module.setting;
 
 public final class BooleanSetting extends Setting<BooleanSetting> {
 	private boolean value;

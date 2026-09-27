@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import dev.duskbyte.event.EventManager;
 import dev.duskbyte.event.events.CameraUpdateListener;

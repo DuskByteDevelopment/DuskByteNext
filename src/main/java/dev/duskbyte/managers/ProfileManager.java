@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.managers;
+package dev.duskbyte.managers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

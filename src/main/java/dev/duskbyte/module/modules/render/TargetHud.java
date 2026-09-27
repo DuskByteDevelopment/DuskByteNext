@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.render;
+package dev.duskbyte.module.modules.render;
 
 import dev.duskbyte.event.events.HudListener;
 import dev.duskbyte.event.events.PacketSendListener;

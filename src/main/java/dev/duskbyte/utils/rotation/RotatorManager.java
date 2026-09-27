@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils.rotation;
+package dev.duskbyte.utils.rotation;
 
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.EventManager;

@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import dev.duskbyte.gui.ClickGui;
 import net.minecraft.client.MinecraftClient;

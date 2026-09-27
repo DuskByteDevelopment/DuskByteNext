@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import com.mojang.authlib.GameProfile;
 import dev.duskbyte.event.EventManager;

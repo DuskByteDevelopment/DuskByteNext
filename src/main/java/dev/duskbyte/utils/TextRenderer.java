@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.utils;
+package dev.duskbyte.utils;
 
 import dev.duskbyte.fonts;
 import dev.duskbyte.module.modules.client.ClickGUI;

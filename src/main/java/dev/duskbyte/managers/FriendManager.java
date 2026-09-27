@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.managers;
+package dev.duskbyte.managers;
 
 
 import net.minecraft.entity.Entity;

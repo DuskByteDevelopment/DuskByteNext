@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.gui.components;
+package dev.duskbyte.gui.components;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.duskbyte.DuskByte;

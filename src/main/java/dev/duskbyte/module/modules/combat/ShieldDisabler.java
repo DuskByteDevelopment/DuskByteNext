@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.combat;
+package dev.duskbyte.module.modules.combat;
 
 import dev.duskbyte.event.events.AttackListener;
 import dev.duskbyte.event.events.TickListener;

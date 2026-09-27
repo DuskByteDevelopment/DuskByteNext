@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.font;
+package dev.duskbyte.font;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;

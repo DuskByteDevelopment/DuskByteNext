@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.modules.misc;
+package dev.duskbyte.module.modules.misc;
 
 import dev.duskbyte.event.events.PacketReceiveListener;
 import dev.duskbyte.module.Category;

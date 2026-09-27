@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.event;
+package dev.duskbyte.event;
 
 import dev.duskbyte.DuskByte;
 

@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import dev.duskbyte.imixin.IKeyBinding;
 import net.minecraft.client.option.KeyBinding;

@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.module.setting;
+package dev.duskbyte.module.setting;
 
 public class StringSetting extends Setting<StringSetting> {
     public String value;

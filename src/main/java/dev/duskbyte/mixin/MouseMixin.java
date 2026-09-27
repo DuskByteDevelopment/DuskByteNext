@@ -1,4 +1,4 @@
-﻿package dev.duskbyte.mixin;
+package dev.duskbyte.mixin;
 
 import dev.duskbyte.DuskByte;
 import dev.duskbyte.event.EventManager;
