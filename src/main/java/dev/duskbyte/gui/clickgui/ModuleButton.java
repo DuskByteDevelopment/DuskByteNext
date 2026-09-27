@@ -65,7 +65,7 @@ public final class ModuleButton {
 
         // Module color (rainbow when enabled)
         Color toColor = module.isEnabled()
-            ? ColorUtils.getMainColor(255, ModuleManager_sortIndex())
+            ? ColorUtils.getMainColor(255, moduleSortIndex())
             : Color.WHITE;
         if (defaultColor == null) defaultColor = Color.WHITE;
         defaultColor = ColorUtils.smoothColorTransition(0.1f, toColor, defaultColor);
@@ -76,7 +76,7 @@ public final class ModuleButton {
                  currentColor.getRGB());
 
         // Left accent bar
-        Color accent = ColorUtils.getMainColor(255, ModuleManager_sortIndex());
+        Color accent = ColorUtils.getMainColor(255, moduleSortIndex());
         ctx.fillGradient(parent.getX(), parent.getY() + offset,
                          parent.getX() + 2, parent.getY() + parent.getHeight() + offset,
                          accent.getRGB(), accent.darker().getRGB());
@@ -167,7 +167,7 @@ public final class ModuleButton {
             && my > parent.getY() + offset && my < parent.getY() + offset + parent.getHeight();
     }
 
-    private int ModuleManager_sortIndex() {
+    private int moduleSortIndex() {
         var list = ModuleManager.getByCategory(module.getCategory());
         return list.indexOf(module);
     }
