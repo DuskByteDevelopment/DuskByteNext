@@ -1,6 +1,6 @@
 ﻿package dev.duskbyte.utils;
 
-import dev.duskbyte.font.Fonts;
+import dev.duskbyte.fonts;
 import dev.duskbyte.module.modules.client.ClickGUI;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;

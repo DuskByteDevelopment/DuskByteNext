@@ -67,8 +67,8 @@ public final class HUD extends Module implements HudListener {
 
 				if (info.getValue() && mc.player != null) {
 					RenderUtils.unscaledProjection();
-					int argonOffset = 10;
-					int argonOffset2 = 10 + TextRenderer.getWidth(DuskByte);
+					int duskbyteOffset = 10;
+					int duskbyteOffset2 = 10 + TextRenderer.getWidth(DuskByte);
 
 					String ping = "Ping: "; // shrimple null check
 					String fps = "FPS: " + mc.getCurrentFps() + " |";
@@ -84,14 +84,14 @@ public final class HUD extends Module implements HudListener {
 						ping += "N/A |";
 					}
 
-					RenderUtils.renderRoundedQuad(context.getMatrices(), new Color(35, 35, 35, 255), 5, 6, argonOffset2 + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + TextRenderer.getWidth(server) + 35, 30, 5, 15);
+					RenderUtils.renderRoundedQuad(context.getMatrices(), new Color(35, 35, 35, 255), 5, 6, duskbyteOffset2 + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + TextRenderer.getWidth(server) + 35, 30, 5, 15);
 
-					TextRenderer.drawString(DuskByte, context, argonOffset, 12, Utils.getMainColor(255, 4).getRGB());
-					argonOffset += TextRenderer.getWidth(DuskByte);
+					TextRenderer.drawString(DuskByte, context, duskbyteOffset, 12, Utils.getMainColor(255, 4).getRGB());
+					duskbyteOffset += TextRenderer.getWidth(DuskByte);
 
-					TextRenderer.drawString(fps, context, argonOffset + 10, 12, Utils.getMainColor(255, 3).getRGB());
-					TextRenderer.drawString(ping, context, (argonOffset + 10) + TextRenderer.getWidth(fps) + 10, 12, Utils.getMainColor(255, 2).getRGB());
-					TextRenderer.drawString(server, context, (argonOffset + 10) + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + 20, 12, Utils.getMainColor(255, 1).getRGB());
+					TextRenderer.drawString(fps, context, duskbyteOffset + 10, 12, Utils.getMainColor(255, 3).getRGB());
+					TextRenderer.drawString(ping, context, (duskbyteOffset + 10) + TextRenderer.getWidth(fps) + 10, 12, Utils.getMainColor(255, 2).getRGB());
+					TextRenderer.drawString(server, context, (duskbyteOffset + 10) + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + 20, 12, Utils.getMainColor(255, 1).getRGB());
 
 					RenderUtils.scaledProjection();
 				}
