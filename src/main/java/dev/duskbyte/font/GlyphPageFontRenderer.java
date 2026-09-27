@@ -491,7 +491,7 @@ public final class GlyphPageFontRenderer {
 	}
 
 	public int getFontHeight() {
-		return regularGlyphPage.getMaxFontHeight() / 2;
+		return (int)(regularGlyphPage.getMaxFontHeight() / 2);
 	}
 
 	public int getStringWidth(CharSequence text) {
@@ -604,6 +604,6 @@ public final class GlyphPageFontRenderer {
 			}
 		}
 
-		return of(stringbuilder.toString());
+		return stringbuilder.toString();
 	}
 }

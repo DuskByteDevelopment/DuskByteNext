@@ -17,7 +17,7 @@ import java.awt.*;
 import java.util.List;
 
 public final class HUD extends Module implements HudListener {
-	private static final CharSequence DuskByte = "DuskByte |";
+	private static final CharSequence BRAND = "DuskByte |";
 	private final BooleanSetting info = new BooleanSetting("Info", true);
 	private final BooleanSetting modules = new BooleanSetting("Modules", true)
 			.setDescription("Renders module array list");
@@ -44,8 +44,8 @@ public final class HUD extends Module implements HudListener {
 
 	@Override
 	public void onRenderHud(HudEvent event) {
-		if (mc.currentScreen != DuskByte.INSTANCE.clickGui) {
-			final List<Module> enabledModules = DuskByte.INSTANCE.
+		if (mc.currentScreen != dev.duskbyte.DuskByte.INSTANCE.clickGui) {
+			final List<Module> enabledModules = dev.duskbyte.DuskByte.INSTANCE.
 					getModuleManager().
 					getEnabledModules().
 					stream().
@@ -68,7 +68,7 @@ public final class HUD extends Module implements HudListener {
 				if (info.getValue() && mc.player != null) {
 					RenderUtils.unscaledProjection();
 					int duskbyteOffset = 10;
-					int duskbyteOffset2 = 10 + TextRenderer.getWidth(DuskByte);
+					int duskbyteOffset2 = 10 + TextRenderer.getWidth(BRAND);
 
 					String ping = "Ping: "; // shrimple null check
 					String fps = "FPS: " + mc.getCurrentFps() + " |";
@@ -86,8 +86,8 @@ public final class HUD extends Module implements HudListener {
 
 					RenderUtils.renderRoundedQuad(context.getMatrices(), new Color(35, 35, 35, 255), 5, 6, duskbyteOffset2 + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + TextRenderer.getWidth(server) + 35, 30, 5, 15);
 
-					TextRenderer.drawString(DuskByte, context, duskbyteOffset, 12, Utils.getMainColor(255, 4).getRGB());
-					duskbyteOffset += TextRenderer.getWidth(DuskByte);
+					TextRenderer.drawString(BRAND, context, duskbyteOffset, 12, Utils.getMainColor(255, 4).getRGB());
+					duskbyteOffset += TextRenderer.getWidth(BRAND);
 
 					TextRenderer.drawString(fps, context, duskbyteOffset + 10, 12, Utils.getMainColor(255, 3).getRGB());
 					TextRenderer.drawString(ping, context, (duskbyteOffset + 10) + TextRenderer.getWidth(fps) + 10, 12, Utils.getMainColor(255, 2).getRGB());
