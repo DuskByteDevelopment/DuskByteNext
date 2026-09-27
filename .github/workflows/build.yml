@@ -115,6 +115,43 @@ jobs:
       - name: Run ZKM
         run: java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
 
+      # ---------- 新增诊断步骤:确认 -keepattributes 是否真的生效 ----------
+      - name: Diagnose annotation stripping
+        shell: pwsh
+        run: |
+          Write-Host "===== [A] ZKM_PG_log.txt (ProGuard 配置翻译日志,通常在仓库根目录) ====="
+          if (Test-Path "ZKM_PG_log.txt") {
+              Get-Content "ZKM_PG_log.txt" | Select-String -Pattern "keepattributes|Annotation|WARNING" -Context 0,1
+          } else {
+              Write-Warning "没找到 ZKM_PG_log.txt,说明没走 ProGuard 翻译路径,或路径不对"
+          }
+
+          Write-Host "===== [B] ZKM_log.txt (通常和 mapping.txt 同目录 build/libs) ====="
+          if (Test-Path "build/libs/ZKM_log.txt") {
+              Get-Content "build/libs/ZKM_log.txt" | Select-String -Pattern "ClientConnectionMixin|Annotation" -Context 0,1
+          } else {
+              Write-Warning "没找到 build/libs/ZKM_log.txt"
+          }
+
+          Write-Host "===== [C] 混淆后 ClientConnectionMixin.class 是否还带 RuntimeVisibleAnnotations ====="
+          New-Item -ItemType Directory -Force -Path mixin_check | Out-Null
+          Push-Location mixin_check
+          & jar xf ../build/libs/duskbyte_obf.jar dev/duskbyte/mixin/ClientConnectionMixin.class
+          & javap -v -p dev/duskbyte/mixin/ClientConnectionMixin.class | Select-String -Pattern "RuntimeVisibleAnnotations|@org.spongepowered|Mixin\(" -Context 0,3
+          Pop-Location
+      # ---------- 诊断步骤结束 ----------
+
+      - name: Upload ZKM logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zkm-logs-${{ github.sha }}
+          path: |
+            ZKM_PG_log.txt
+            build/libs/ZKM_log.txt
+            build/libs/mapping.txt
+          if-no-files-found: ignore
+
       - name: Restore nested jars into obfuscated JAR
         shell: pwsh
         run: .\zkm_restore_nested.ps1 -Jar build/libs/duskbyte_obf.jar -NestedDir zkm_nested
