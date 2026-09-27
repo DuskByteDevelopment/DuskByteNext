@@ -46,21 +46,11 @@ jobs:
       - name: Get all dependency JARs
         id: deps
         run: |
-          echo "=== Searching for dependency JARs ==="
-          # Search project .gradle
-          find .gradle -name "*.jar" 2>/dev/null | head -20
-          echo "---"
-          # Search global gradle caches
-          find ~/.gradle/caches -name "*.jar" -path "*loom*" 2>/dev/null | head -20
-          echo "---"
-          # Search for minecraft specifically
-          find ~/.gradle/caches -name "minecraft-merged*.jar" 2>/dev/null | head -10
-          find .gradle -name "minecraft-merged*.jar" 2>/dev/null | head -10
-          echo "=== Done ==="
-          # Combine all
+          echo "=== Searching for ALL dependency JARs ==="
+          # Find ALL jars in .gradle and ~/.gradle/caches
           DEPS=""
           for f in $(find .gradle -name "*.jar" 2>/dev/null); do DEPS="$DEPS$f;"; done
-          for f in $(find ~/.gradle/caches -name "*.jar" -path "*loom*" 2>/dev/null); do DEPS="$DEPS$f;"; done
+          for f in $(find ~/.gradle/caches -name "*.jar" 2>/dev/null); do DEPS="$DEPS$f;"; done
           echo "deps=$DEPS" >> $GITHUB_OUTPUT
           COUNT=$(echo "$DEPS" | tr ';' '\n' | grep -c "\.jar")
           echo "Found $COUNT dependency JARs"
