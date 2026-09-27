@@ -34,7 +34,6 @@ jobs:
         run: |
           gradle wrapper --gradle-version 8.8
           .\gradlew.bat clean build
-
       - name: Find built JAR
         id: findjar
         shell: pwsh
@@ -45,7 +44,6 @@ jobs:
           if (-not $jar) { Write-Error "no jar found"; exit 1 }
           "jar=$($jar.FullName)" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
           Write-Host "Found: $($jar.FullName)"
-
       - name: Collect classpath from Gradle
         shell: pwsh
         run: .\gradlew.bat -q printClasspath | Out-File -Encoding ascii cp.txt
@@ -70,6 +68,40 @@ jobs:
           $all = $head + $libs + $tail
           Set-Content -Path zkm_obf.pro -Value $all -Encoding ascii
           Write-Host "library jars: $($libs.Count)"
+      # ---------- 新增诊断步骤:定位签名不一致的真实原因 ----------
+      - name: Diagnose RenderSystem method signature
+        shell: pwsh
+        run: |
+          Write-Host "===== [1] cp.txt 收集到的 library jar 总数 ====="
+          $allLibs = Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } | Where-Object { $_ }
+          Write-Host "total entries: $($allLibs.Count)"
+
+          Write-Host "===== [2] cp.txt 里所有匹配 'minecraft-merged' 的条目 ====="
+          $mergedJars = $allLibs | Where-Object { $_ -match 'minecraft-merged' }
+          $mergedJars | ForEach-Object { Write-Host $_ }
+          if ($mergedJars.Count -gt 1) {
+              Write-Warning "发现多个 minecraft-merged jar,这很可能就是签名找不到的原因!"
+          }
+
+          $mergedJar = $mergedJars | Select-Object -First 1
+          if (-not $mergedJar) {
+              Write-Warning "cp.txt 里根本没有 minecraft-merged jar,classpath 收集有问题!"
+          } else {
+              New-Item -ItemType Directory -Force -Path rs_check | Out-Null
+              Push-Location rs_check
+              & jar xf "$mergedJar" com/mojang/blaze3d/systems/RenderSystem.class
+              Write-Host "===== [3] merged jar 里 RenderSystem 的 setProjectionMatrix 重载 ====="
+              & javap -p com/mojang/blaze3d/systems/RenderSystem.class | Select-String -Pattern "setProjectionMatrix"
+              Pop-Location
+          }
+
+          Write-Host "===== [4] duskbyte_obf.jar 里 RenderUtils.class 实际调用的签名 ====="
+          New-Item -ItemType Directory -Force -Path ru_check | Out-Null
+          Push-Location ru_check
+          & jar xf ../build/libs/duskbyte_obf.jar dev/duskbyte/utils/RenderUtils.class
+          & javap -c -p dev/duskbyte/utils/RenderUtils.class | Select-String -Pattern "setProjectionMatrix" -Context 1,1
+          Pop-Location
+      # ---------- 诊断步骤结束 ----------
 
       - name: Run ZKM
         run: java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
@@ -85,7 +117,6 @@ jobs:
           Remove-Item build/libs/*sources*.jar -ErrorAction SilentlyContinue
           Copy-Item build/libs/duskbyte_obf.jar $out -Force
           Remove-Item build/libs/duskbyte_obf.jar -ErrorAction SilentlyContinue
-
       - name: Upload obfuscated JAR
         uses: actions/upload-artifact@v4
         with:
