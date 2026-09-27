@@ -12,6 +12,10 @@
   "duskbyte.module.combat.autoez": "自动嘲讽",
   "duskbyte.module.combat.autoweapon": "自动武器",
   "duskbyte.module.combat.triggerbot": "触发攻击",
+  "duskbyte.module.combat.nomissdelay": "无失误延迟",
+  "duskbyte.module.combat.autodoublehand": "自动双持",
+  "duskbyte.module.combat.autohitcrystal": "自动打水晶",
+  "duskbyte.module.combat.shielddisabler": "盾牌失效",
 
   "duskbyte.module.movement.sprint": "自动疾跑",
   "duskbyte.module.movement.speed": "速度",
@@ -32,6 +36,7 @@
   "duskbyte.module.render.nametags": "名称标签",
   "duskbyte.module.render.storageesp": "箱子透视",
   "duskbyte.module.render.zoom": "缩放",
+  "duskbyte.module.render.nobounce": "无弹跳",
 
   "duskbyte.module.player.autototem": "自动图腾",
   "duskbyte.module.player.cheststealer": "箱子偷取",
@@ -51,6 +56,8 @@
   "duskbyte.module.misc.chatsuffix": "聊天后缀",
   "duskbyte.module.misc.autolog": "自动退出",
   "duskbyte.module.misc.middleclickpearl": "中键末影珍珠",
+  "duskbyte.module.misc.nojumpdelay": "无跳跃延迟",
+  "duskbyte.module.misc.nobreakdelay": "无挖掘延迟",
 
   "duskbyte.setting.range": "范围",
   "duskbyte.setting.cps": "每秒攻击次数",

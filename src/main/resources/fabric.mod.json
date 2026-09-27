@@ -1,19 +1,15 @@
-
-{
+﻿{
   "schemaVersion": 1,
-  "id": "duskbyte-client",
-  "version": "${mod_version}",
-  "name": "DuskByteClient",
-  "description": "A cool Fabric utility mod for 1.21.1 — inspired by OpenMio, OpenTroll-Recode & Meteor Client",
-  "authors": ["DuskByte Team"],
-  "contact": {
-    "homepage": "https://github.com/GzSakura1338/OpenMio"
-  },
+  "id": "duskbyte",
+  "version": "DuskByte-1337",
+  "name": "DuskByte",
+  "description": "DuskByte Client - Inspired by Argon",
+  "authors": ["DuskByte"],
   "license": "GPL-3.0",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "dev.duskbyte.DuskByteClient"
+      "dev.duskbyte.DuskByte"
     ]
   },
   "mixins": [
@@ -21,7 +17,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.16.0",
-    "minecraft": "~1.21.1",
+    "minecraft": "~1.21",
     "java": ">=21",
     "fabric-api": "*"
   }

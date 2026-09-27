@@ -12,6 +12,10 @@
   "duskbyte.module.combat.autoez": "Auto EZ",
   "duskbyte.module.combat.autoweapon": "Auto Weapon",
   "duskbyte.module.combat.triggerbot": "Trigger Bot",
+  "duskbyte.module.combat.nomissdelay": "No Miss Delay",
+  "duskbyte.module.combat.autodoublehand": "Auto Double Hand",
+  "duskbyte.module.combat.autohitcrystal": "Auto Hit Crystal",
+  "duskbyte.module.combat.shielddisabler": "Shield Disabler",
 
   "duskbyte.module.movement.sprint": "Sprint",
   "duskbyte.module.movement.speed": "Speed",
@@ -32,6 +36,7 @@
   "duskbyte.module.render.nametags": "Nametags",
   "duskbyte.module.render.storageesp": "Storage ESP",
   "duskbyte.module.render.zoom": "Zoom",
+  "duskbyte.module.render.nobounce": "No Bounce",
 
   "duskbyte.module.player.autototem": "Auto Totem",
   "duskbyte.module.player.cheststealer": "Chest Stealer",
@@ -51,6 +56,8 @@
   "duskbyte.module.misc.chatsuffix": "Chat Suffix",
   "duskbyte.module.misc.autolog": "Auto Log",
   "duskbyte.module.misc.middleclickpearl": "Middle Click Pearl",
+  "duskbyte.module.misc.nojumpdelay": "No Jump Delay",
+  "duskbyte.module.misc.nobreakdelay": "No Break Delay",
 
   "duskbyte.setting.range": "Range",
   "duskbyte.setting.cps": "CPS",

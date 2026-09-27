@@ -1,67 +1,102 @@
+﻿package dev.duskbyte.module;
 
-package dev.duskbyte.module;
+import dev.duskbyte.DuskByte;
+import dev.duskbyte.event.EventManager;
+import dev.duskbyte.module.setting.Setting;
 
-import dev.duskbyte.setting.Setting;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
+
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public abstract class Module {
-    protected static final MinecraftClient mc = MinecraftClient.getInstance();
-    private final String name, description;
-    private final Category category;
-    private final String translationKey;
-    private int key;
-    private boolean enabled;
-    public final List<Setting<?>> settings = new ArrayList<>();
+public abstract class Module implements Serializable {
+	private final List<Setting<?>> settings = new ArrayList<>();
+	public final EventManager eventManager = DuskByte.INSTANCE.eventManager;
+	protected MinecraftClient mc = MinecraftClient.getInstance();
+	private CharSequence name;
+	private CharSequence description;
+	private boolean enabled;
+	private int key;
+	private Category category;
 
-    protected Module(String name, String description, Category category) {
-        this(name, description, category, GLFW.GLFW_KEY_UNKNOWN);
-    }
+	public Module(CharSequence name, CharSequence description, int key, Category category) {
+		this.name = name;
+		this.description = description;
+		this.enabled = false;
+		this.key = key;
+		this.category = category;
+	}
 
-    protected Module(String name, String description, Category category, int defaultKey) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.key = defaultKey;
-        this.translationKey = "duskbyte.module." + category.name().toLowerCase() + "." + name.toLowerCase().replace(" ", "");
-    }
+	public void toggle() {
+		enabled = !enabled;
+		if (enabled)
+			onEnable();
+		else onDisable();
+	}
 
-    protected <T extends Setting<?>> T add(T setting) {
-        settings.add(setting);
-        return setting;
-    }
+	public CharSequence getName() {
+		return name;
+	}
 
-    public void toggle() {
-        if (enabled) disable(); else enable();
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public void enable() {
-        enabled = true;
-        onEnable();
-    }
+	public CharSequence getDescription() {
+		return description;
+	}
 
-    public void disable() {
-        enabled = false;
-        onDisable();
-    }
+	public int getKey() {
+		return key;
+	}
 
-    protected void onEnable() {}
-    protected void onDisable() {}
-    public void onTick() {}
-    public void onAttack(Entity target) {}
+	public Category getCategory() {
+		return category;
+	}
 
-    public String getName() { return name; }
-    public String getRawName() { return name; }
-    public Text getTitle() { return Text.translatable(translationKey); }
-    public String getTranslationKey() { return translationKey; }
-    public String getDescription() { return description; }
-    public Category getCategory() { return category; }
-    public int getKey() { return key; }
-    public void setKey(int key) { this.key = key; }
-    public boolean isEnabled() { return enabled; }
-    public List<Setting<?>> getSettings() { return settings; }
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public void setName(CharSequence name) {
+		this.name = name;
+	}
+
+	public void setDescription(CharSequence description) {
+		this.description = description;
+	}
+
+	public void setKey(int key) {
+		this.key = key;
+	}
+
+	public List<Setting<?>> getSettings() {
+		return settings;
+	}
+
+	public void onEnable() {}
+
+	public void onDisable() {}
+
+	public void addSetting(Setting<?> setting) {
+		this.settings.add(setting);
+	}
+
+	public void addSettings(Setting<?>... settings) {
+		this.settings.addAll(Arrays.asList(settings));
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if (enabled)
+			onEnable();
+		else onDisable();
+	}
+
+	public void setEnabledStatus(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 }

@@ -1,101 +1,116 @@
+﻿package dev.duskbyte.module;
 
-package dev.duskbyte.module;
-
-import dev.duskbyte.module.combat.*;
-import dev.duskbyte.module.movement.*;
-import dev.duskbyte.module.render.*;
-import dev.duskbyte.module.player.*;
-import dev.duskbyte.module.misc.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
+import dev.duskbyte.DuskByte;
+import dev.duskbyte.event.events.ButtonListener;
+import dev.duskbyte.module.modules.client.ClickGUI;
+import dev.duskbyte.module.modules.client.Friends;
+import dev.duskbyte.module.modules.client.SelfDestruct;
+import dev.duskbyte.module.modules.combat.*;
+import dev.duskbyte.module.modules.misc.*;
+import dev.duskbyte.module.modules.render.*;
+import dev.duskbyte.module.setting.KeybindSetting;
 import org.lwjgl.glfw.GLFW;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class ModuleManager {
-    private static final List<Module> modules = new ArrayList<>();
-    private static final Map<Module, Boolean> keyStates = new ConcurrentHashMap<>();
+import java.util.ArrayList;
+import java.util.List;
 
-    public static void init() {
-        modules.add(new KillAura());
-        modules.add(new Velocity());
-        modules.add(new Criticals());
-        modules.add(new AutoClicker());
-        modules.add(new Sprint());
-        modules.add(new Speed());
-        modules.add(new Flight());
-        modules.add(new NoFall());
-        modules.add(new Step());
-        modules.add(new ElytraFly());
-        modules.add(new ESP());
-        modules.add(new Tracers());
-        modules.add(new Fullbright());
-        modules.add(new Chams());
-        modules.add(new AutoTotem());
-        modules.add(new ChestStealer());
-        modules.add(new FastPlace());
-        modules.add(new AutoEat());
-        modules.add(new AntiAFK());
-        modules.add(new dev.duskbyte.module.misc.Timer());
-        modules.add(new ChatSuffix());
-        modules.add(new AutoEZ());
-        modules.add(new AutoWeapon());
-        modules.add(new TriggerBot());
-        modules.add(new Jesus());
-        modules.add(new Parkour());
-        modules.add(new HighJump());
-        modules.add(new Sneak());
-        modules.add(new NoSlow());
-        modules.add(new Nametags());
-        modules.add(new StorageESP());
-        modules.add(new AutoTool());
-        modules.add(new AutoArmor());
-        modules.add(new AutoRespawn());
-        modules.add(new AutoLog());
-        modules.add(new ChestAura());
-        modules.add(new MiddleClickPearl());
-        modules.add(new Zoom());
-        modules.add(new ViewLock());
-        modules.add(new FastBreak());
-        modules.add(new NoRotate());
-        modules.add(new FastUse());
-    }
+public final class ModuleManager implements ButtonListener {
+	private final List<Module> modules = new ArrayList<>();
 
-    public static void tick() {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.player == null) return;
-        long window = mc.getWindow().getHandle();
-        for (Module m : modules) {
-            if (m.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
-                boolean down = InputUtil.isKeyPressed(window, m.getKey());
-                if (down && !keyStates.getOrDefault(m, false)) m.toggle();
-                keyStates.put(m, down);
-            }
-            if (m.isEnabled()) m.onTick();
-        }
-    }
+	public ModuleManager() {
+		addModules();
+		addKeybinds();
+	}
 
-    public static void attack(net.minecraft.entity.Entity target) {
-        for (Module m : modules) {
-            if (m.isEnabled()) m.onAttack(target);
-        }
-    }
+	public void addModules() {
+		//Combat
+		add(new AimAssist());
+		add(new AnchorMacro());
+		add(new AutoCrystal());
+		add(new AutoDoubleHand());
+		add(new AutoHitCrystal());
+		add(new AutoInventoryTotem());
+		add(new TriggerBot());
+		add(new AutoPot());
+		add(new AutoPotRefill());
+		add(new AutoWTap());
+		add(new CrystalOptimizer());
+		add(new DoubleAnchor());
+		add(new HoverTotem());
+		add(new NoMissDelay());
+		add(new ShieldDisabler());
+		add(new TotemOffhand());
+		add(new AutoJumpReset());
 
-    public static Module get(Class<? extends Module> clazz) {
-        return modules.stream().filter(m -> clazz.isInstance(m)).findFirst().orElse(null);
-    }
+		//Misc
+		add(new Prevent());
+		add(new AutoXP());
+		add(new NoJumpDelay());
+		add(new PingSpoof());
+		add(new FakeLag());
+		add(new AutoClicker());
+		add(new KeyPearl());
+		add(new NoBreakDelay());
+		add(new Freecam());
+		add(new PackSpoof());
+		add(new Sprint());
 
-    public static List<Module> getModules() { return Collections.unmodifiableList(modules); }
+		//Render
+		add(new HUD());
+		add(new NoBounce());
+		add(new PlayerESP());
+		add(new StorageEsp());
+		add(new TargetHud());
 
-    public static List<Module> getEnabled() {
-        List<Module> enabled = new ArrayList<>();
-        for (Module m : modules) if (m.isEnabled()) enabled.add(m);
-        return enabled;
-    }
+		//Client
+		add(new ClickGUI());
+		add(new Friends());
+		add(new SelfDestruct());
+	}
 
-    public static List<Module> getByCategory(Category cat) {
-        List<Module> list = new ArrayList<>();
-        for (Module m : modules) if (m.getCategory() == cat) list.add(m);
-        return list;
-    }
+	public List<Module> getEnabledModules() {
+		return modules.stream()
+				.filter(Module::isEnabled)
+				.toList();
+	}
+
+
+	public List<Module> getModules() {
+		return modules;
+	}
+
+	public void addKeybinds() {
+		DuskByte.INSTANCE.getEventManager().add(ButtonListener.class, this);
+
+		for (Module module : modules)
+			module.addSetting(new KeybindSetting(Keybind, module.getKey(), true).setDescription(Key to enabled the module));
+	}
+
+	public List<Module> getModulesInCategory(Category category) {
+		return modules.stream()
+				.filter(module -> module.getCategory() == category)
+				.toList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Module> T getModule(Class<T> moduleClass) {
+		return (T) modules.stream()
+				.filter(moduleClass::isInstance)
+				.findFirst()
+				.orElse(null);
+	}
+
+	public void add(Module module) {
+		modules.add(module);
+	}
+
+	@Override
+	public void onButtonPress(ButtonEvent event) {
+		if(!SelfDestruct.destruct) {
+			modules.forEach(module -> {
+				if(module.getKey() == event.button && event.action == GLFW.GLFW_PRESS)
+					module.toggle();
+			});
+		}
+	}
 }
