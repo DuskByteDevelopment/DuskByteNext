@@ -31,6 +31,7 @@
   "duskbyte.module.render.chams": "Chams",
   "duskbyte.module.render.nametags": "Nametags",
   "duskbyte.module.render.storageesp": "Storage ESP",
+  "duskbyte.module.render.zoom": "Zoom",
 
   "duskbyte.module.player.autototem": "Auto Totem",
   "duskbyte.module.player.cheststealer": "Chest Stealer",
@@ -39,10 +40,17 @@
   "duskbyte.module.player.autotool": "Auto Tool",
   "duskbyte.module.player.autoarmor": "Auto Armor",
   "duskbyte.module.player.autorespawn": "Auto Respawn",
+  "duskbyte.module.player.chestaura": "Chest Aura",
+  "duskbyte.module.player.viewlock": "View Lock",
+  "duskbyte.module.player.fastbreak": "Fast Break",
+  "duskbyte.module.player.norotate": "No Rotate",
+  "duskbyte.module.player.fastuse": "Fast Use",
 
   "duskbyte.module.misc.antiafk": "Anti AFK",
   "duskbyte.module.misc.timer": "Timer",
   "duskbyte.module.misc.chatsuffix": "Chat Suffix",
+  "duskbyte.module.misc.autolog": "Auto Log",
+  "duskbyte.module.misc.middleclickpearl": "Middle Click Pearl",
 
   "duskbyte.setting.range": "Range",
   "duskbyte.setting.cps": "CPS",
@@ -72,6 +80,9 @@
   "duskbyte.setting.downspeed": "Down Speed",
   "duskbyte.setting.edgedistance": "Edge Distance",
   "duskbyte.setting.multiplier": "Multiplier",
+  "duskbyte.setting.zoomlevel": "Zoom Level",
+  "duskbyte.setting.yaw": "Yaw",
+  "duskbyte.setting.pitch": "Pitch",
 
   "duskbyte.gui.bind": "Bind",
   "duskbyte.gui.tip": "Left=Toggle | Right=Settings | Middle=Bind",

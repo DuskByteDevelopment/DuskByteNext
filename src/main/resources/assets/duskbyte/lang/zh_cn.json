@@ -31,6 +31,7 @@
   "duskbyte.module.render.chams": "实体穿透",
   "duskbyte.module.render.nametags": "名称标签",
   "duskbyte.module.render.storageesp": "箱子透视",
+  "duskbyte.module.render.zoom": "缩放",
 
   "duskbyte.module.player.autototem": "自动图腾",
   "duskbyte.module.player.cheststealer": "箱子偷取",
@@ -39,10 +40,17 @@
   "duskbyte.module.player.autotool": "自动工具",
   "duskbyte.module.player.autoarmor": "自动装备",
   "duskbyte.module.player.autorespawn": "自动重生",
+  "duskbyte.module.player.chestaura": "箱子光环",
+  "duskbyte.module.player.viewlock": "视角锁定",
+  "duskbyte.module.player.fastbreak": "快速挖掘",
+  "duskbyte.module.player.norotate": "防转向",
+  "duskbyte.module.player.fastuse": "快速使用",
 
   "duskbyte.module.misc.antiafk": "防挂机",
   "duskbyte.module.misc.timer": "计时加速",
   "duskbyte.module.misc.chatsuffix": "聊天后缀",
+  "duskbyte.module.misc.autolog": "自动退出",
+  "duskbyte.module.misc.middleclickpearl": "中键末影珍珠",
 
   "duskbyte.setting.range": "范围",
   "duskbyte.setting.cps": "每秒攻击次数",
@@ -72,6 +80,9 @@
   "duskbyte.setting.downspeed": "下降速度",
   "duskbyte.setting.edgedistance": "边缘距离",
   "duskbyte.setting.multiplier": "倍数",
+  "duskbyte.setting.zoomlevel": "缩放等级",
+  "duskbyte.setting.yaw": "偏航角",
+  "duskbyte.setting.pitch": "俯仰角",
 
   "duskbyte.gui.bind": "绑定",
   "duskbyte.gui.tip": "左键=开关 | 右键=设置 | 中键=绑定按键",

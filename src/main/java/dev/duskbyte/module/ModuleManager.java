@@ -5,9 +5,7 @@ import dev.duskbyte.module.combat.*;
 import dev.duskbyte.module.movement.*;
 import dev.duskbyte.module.render.*;
 import dev.duskbyte.module.player.*;
-import dev.duskbyte.module.misc.AntiAFK;
-import dev.duskbyte.module.misc.Timer;
-import dev.duskbyte.module.misc.ChatSuffix;
+import dev.duskbyte.module.misc.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -53,6 +51,14 @@ public class ModuleManager {
         modules.add(new AutoTool());
         modules.add(new AutoArmor());
         modules.add(new AutoRespawn());
+        modules.add(new AutoLog());
+        modules.add(new ChestAura());
+        modules.add(new MiddleClickPearl());
+        modules.add(new Zoom());
+        modules.add(new ViewLock());
+        modules.add(new FastBreak());
+        modules.add(new NoRotate());
+        modules.add(new FastUse());
     }
 
     public static void tick() {
