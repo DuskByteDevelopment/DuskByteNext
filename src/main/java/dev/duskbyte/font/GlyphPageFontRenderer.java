@@ -604,6 +604,6 @@ public final class GlyphPageFontRenderer {
 			}
 		}
 
-		return EncryptedString.of(stringbuilder.toString());
+		return of(stringbuilder.toString());
 	}
 }

@@ -1,7 +1,7 @@
 package dev.duskbyte.font;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import lombok.Getter;
+
 import net.minecraft.client.render.*;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
@@ -22,7 +22,6 @@ import java.util.HashMap;
 public final class GlyphPage {
 
 	private int imgSize;
-	@Getter
 	private int maxFontHeight = -1;
 	private final Font font;
 	private final boolean antiAliasing;
@@ -180,7 +179,6 @@ public final class GlyphPage {
 		return fractionalMetrics;
 	}
 
-	@Getter
 	static class Glyph {
 		private int x;
 		private int y;
@@ -198,4 +196,4 @@ public final class GlyphPage {
 		}
 
 	}
-}
+    public float getMaxFontHeight() { return maxFontHeight; }}
