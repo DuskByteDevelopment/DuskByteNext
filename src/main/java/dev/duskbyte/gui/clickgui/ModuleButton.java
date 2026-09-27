@@ -5,7 +5,7 @@ import dev.duskbyte.gui.util.*;
 import dev.duskbyte.gui.clickgui.settings.*;
 import dev.duskbyte.module.Module;
 import dev.duskbyte.module.ModuleManager;
-import dev.duskbyte.module.setting.*;
+import dev.duskbyte.setting.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 

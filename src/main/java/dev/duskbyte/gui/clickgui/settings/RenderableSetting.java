@@ -2,7 +2,7 @@
 package dev.duskbyte.gui.clickgui.settings;
 
 import dev.duskbyte.gui.clickgui.ModuleButton;
-import dev.duskbyte.module.setting.Setting;
+import dev.duskbyte.setting.Setting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 

@@ -3,7 +3,7 @@ package dev.duskbyte.gui.clickgui.settings;
 
 import dev.duskbyte.gui.clickgui.ModuleButton;
 import dev.duskbyte.gui.util.*;
-import dev.duskbyte.module.setting.NumberSetting;
+import dev.duskbyte.setting.NumberSetting;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.Color;

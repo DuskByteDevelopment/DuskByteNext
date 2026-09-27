@@ -1,6 +1,7 @@
 
 package dev.duskbyte.gui.clickgui;
 
+import dev.duskbyte.gui.ClickGuiScreen;
 import dev.duskbyte.gui.util.*;
 import dev.duskbyte.module.Category;
 import dev.duskbyte.module.Module;
