@@ -14,16 +14,16 @@ import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 
 public final class AutoXP extends Module implements TickListener, ItemUseListener {
-	private final NumberSetting delay = new NumberSetting(Delay, 0, 20, 0, 1);
-	private final NumberSetting chance = new NumberSetting(Chance, 0, 100, 100, 1)
-			.setDescription(Randomization);
-	private final BooleanSetting clickSimulation = new BooleanSetting(Click Simulation, false)
-			.setDescription(Makes the CPS hud think you're legit);
+	private final NumberSetting delay = new NumberSetting("Delay", 0, 20, 0, 1);
+	private final NumberSetting chance = new NumberSetting("Chance", 0, 100, 100, 1)
+			.setDescription("Randomization");
+	private final BooleanSetting clickSimulation = new BooleanSetting("Click Simulation", false)
+			.setDescription("Makes the CPS hud think you're legit");
 	int clock;
 
 	public AutoXP() {
-		super(Auto XP,
-				Automatically throws XP bottles for you,
+		super("Auto XP",
+				"Automatically throws XP bottles for you",
 				-1,
 				Category.MISC);
 		addSettings(delay, chance, clickSimulation);

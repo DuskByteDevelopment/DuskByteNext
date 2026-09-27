@@ -20,17 +20,17 @@ import net.minecraft.util.math.Vec3d;
 import java.awt.*;
 
 public final class TargetHud extends Module implements HudListener, PacketSendListener {
-	private final NumberSetting xCoord = new NumberSetting(X, 0, 1920, 500, 1);
-	private final NumberSetting yCoord = new NumberSetting(Y, 0, 1080, 500, 1);
-	private final BooleanSetting hudTimeout = new BooleanSetting(Timeout, true)
-			.setDescription(Target hud will disappear after 10 seconds);
+	private final NumberSetting xCoord = new NumberSetting("X", 0, 1920, 500, 1);
+	private final NumberSetting yCoord = new NumberSetting("Y", 0, 1080, 500, 1);
+	private final BooleanSetting hudTimeout = new BooleanSetting("Timeout", true)
+			.setDescription("Target hud will disappear after 10 seconds");
 	private long lastAttackTime = 0;
 	public static float animation;
 	private static final long timeout = 10000;
 
 	public TargetHud() {
-		super(Target HUD,
-				Gives you information about the enemy player,
+		super("Target HUD",
+				"Gives you information about the enemy player",
 				-1,
 				Category.RENDER);
 		addSettings(xCoord, yCoord, hudTimeout);

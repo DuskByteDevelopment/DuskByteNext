@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 public final class Utils {
 

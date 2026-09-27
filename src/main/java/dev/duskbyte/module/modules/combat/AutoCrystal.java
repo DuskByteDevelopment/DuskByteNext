@@ -24,38 +24,38 @@ import net.minecraft.util.math.Direction;
 import org.lwjgl.glfw.GLFW;
 
 public final class AutoCrystal extends Module implements TickListener, ItemUseListener {
-	private final KeybindSetting activateKey = new KeybindSetting(Activate Key, GLFW.GLFW_MOUSE_BUTTON_RIGHT, false)
-			.setDescription(Key that does the crystalling);
+	private final KeybindSetting activateKey = new KeybindSetting("Activate Key", GLFW.GLFW_MOUSE_BUTTON_RIGHT, false)
+			.setDescription("Key that does the crystalling");
 
-	private final NumberSetting placeDelay = new NumberSetting(Place Delay, 0, 20, 0, 1);
-	private final NumberSetting breakDelay = new NumberSetting(Break Delay, 0, 20, 0, 1);
+	private final NumberSetting placeDelay = new NumberSetting("Place Delay", 0, 20, 0, 1);
+	private final NumberSetting breakDelay = new NumberSetting("Break Delay", 0, 20, 0, 1);
 
-	private final NumberSetting placeChance = new NumberSetting(Place Chance, 0, 100, 100, 1)
-			.setDescription(Randomization);
-	private final NumberSetting breakChance = new NumberSetting(Break Chance, 0, 100, 100, 1)
-			.setDescription(Randomization);
+	private final NumberSetting placeChance = new NumberSetting("Place Chance", 0, 100, 100, 1)
+			.setDescription("Randomization");
+	private final NumberSetting breakChance = new NumberSetting("Break Chance", 0, 100, 100, 1)
+			.setDescription("Randomization");
 
-	private final BooleanSetting stopOnKill = new BooleanSetting(Stop on Kill, false)
-			.setDescription(Won't crystal if a dead player is nearby);
-	private final BooleanSetting fakePunch = new BooleanSetting(Fake Punch, false)
-			.setDescription(Will hit every entity and block if you miss a hitcrystal);
-	private final BooleanSetting clickSimulation = new BooleanSetting(Click Simulation, false)
-			.setDescription(Makes the CPS hud think you're legit);
-	private final BooleanSetting damageTick = new BooleanSetting(Damage Tick, false)
-			.setDescription(Times your crystals for a perfect d-tap);
-	private final BooleanSetting antiWeakness = new BooleanSetting(Anti-Weakness, false)
-			.setDescription(Silently switches to a sword and then hits the crystal if you have weakness);
+	private final BooleanSetting stopOnKill = new BooleanSetting("Stop on Kill", false)
+			.setDescription("Won't crystal if a dead player is nearby");
+	private final BooleanSetting fakePunch = new BooleanSetting("Fake Punch", false)
+			.setDescription("Will hit every entity and block if you miss a hitcrystal");
+	private final BooleanSetting clickSimulation = new BooleanSetting("Click Simulation", false)
+			.setDescription("Makes the CPS hud think you're legit");
+	private final BooleanSetting damageTick = new BooleanSetting("Damage Tick", false)
+			.setDescription("Times your crystals for a perfect d-tap");
+	private final BooleanSetting antiWeakness = new BooleanSetting("Anti-Weakness", false)
+			.setDescription("Silently switches to a sword and then hits the crystal if you have weakness");
 
-	private final NumberSetting particleChance = new NumberSetting(Particle Chance, 0, 100, 20, 1)
-			.setDescription(Adds block breaking particles to make it seem more legit from your POV (Only works with fake punch));
+	private final NumberSetting particleChance = new NumberSetting("Particle Chance", 0, 100, 20, 1)
+			.setDescription("Adds block breaking particles to make it seem more legit from your POV (Only works with fake punch)");
 
 	private int placeClock;
 	private int breakClock;
 	public boolean crystalling;
 
 	public AutoCrystal() {
-		super(Auto Crystal,
-				Automatically crystals fast for you,
+		super("Auto Crystal",
+				"Automatically crystals fast for you",
 				-1,
 				Category.COMBAT);
 		addSettings(activateKey, placeDelay, breakDelay, placeChance, breakChance, stopOnKill, fakePunch, clickSimulation, damageTick, antiWeakness, particleChance);

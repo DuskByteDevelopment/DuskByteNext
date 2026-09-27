@@ -24,14 +24,14 @@ import net.minecraft.world.chunk.WorldChunk;
 import java.awt.*;
 
 public final class StorageEsp extends Module implements GameRenderListener, PacketReceiveListener {
-	private final NumberSetting alpha = new NumberSetting(Alpha, 1, 255, 125, 1);
-	private final BooleanSetting donutBypass = new BooleanSetting(Donut Bypass, false);
-	private final BooleanSetting tracers = new BooleanSetting(Tracers, false)
-			.setDescription(Draws a line from your player to the storage block);
+	private final NumberSetting alpha = new NumberSetting("Alpha", 1, 255, 125, 1);
+	private final BooleanSetting donutBypass = new BooleanSetting("Donut Bypass", false);
+	private final BooleanSetting tracers = new BooleanSetting("Tracers", false)
+			.setDescription("Draws a line from your player to the storage block");
 
 	public StorageEsp() {
-		super(Storage ESP,
-				Renders storage blocks through walls,
+		super("Storage ESP",
+				"Renders storage blocks through walls",
 				-1,
 				Category.RENDER);
 		addSettings(donutBypass, alpha, tracers);

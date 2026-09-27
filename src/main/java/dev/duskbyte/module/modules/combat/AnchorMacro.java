@@ -23,19 +23,19 @@ import java.util.Set;
 
 //not mine
 public final class AnchorMacro extends Module implements TickListener, ItemUseListener {
-	private final BooleanSetting whileUse = new BooleanSetting(While Use, true).setDescription(If it should trigger while eating/using shield);
-	private final BooleanSetting stopOnKill = new BooleanSetting(Stop on Kill, false).setDescription(Doesn't anchor if body nearby);
-	private final BooleanSetting clickSimulation = new BooleanSetting(Click Simulation, false).setDescription(Makes the CPS hud think you're legit);
-	private final NumberSetting switchDelay = new NumberSetting(Switch Delay, 0, 20, 0, 1);
-	private final NumberSetting switchChance = new NumberSetting(Switch Chance, 0, 100, 100, 1);
-	private final NumberSetting placeChance = new NumberSetting(Place Chance, 0, 100, 100, 1).setDescription(Randomization);
-	private final NumberSetting glowstoneDelay = new NumberSetting(Glowstone Delay, 0, 20, 0, 1);
-	private final NumberSetting glowstoneChance = new NumberSetting(Glowstone Chance, 0, 100, 100, 1);
-	private final NumberSetting explodeDelay = new NumberSetting(Explode Delay, 0, 20, 0, 1);
-	private final NumberSetting explodeChance = new NumberSetting(Explode Chance, 0, 100, 100, 1);
-	private final NumberSetting explodeSlot = new NumberSetting(Explode Slot, 1, 9, 1, 1);
-	private final BooleanSetting onlyOwn = new BooleanSetting(Only Own, false);
-	private final BooleanSetting onlyCharge = new BooleanSetting(Only Charge, false);
+	private final BooleanSetting whileUse = new BooleanSetting("While Use", true).setDescription("If it should trigger while eating/using shield");
+	private final BooleanSetting stopOnKill = new BooleanSetting("Stop on Kill", false).setDescription("Doesn't anchor if body nearby");
+	private final BooleanSetting clickSimulation = new BooleanSetting("Click Simulation", false).setDescription("Makes the CPS hud think you're legit");
+	private final NumberSetting switchDelay = new NumberSetting("Switch Delay", 0, 20, 0, 1);
+	private final NumberSetting switchChance = new NumberSetting("Switch Chance", 0, 100, 100, 1);
+	private final NumberSetting placeChance = new NumberSetting("Place Chance", 0, 100, 100, 1).setDescription("Randomization");
+	private final NumberSetting glowstoneDelay = new NumberSetting("Glowstone Delay", 0, 20, 0, 1);
+	private final NumberSetting glowstoneChance = new NumberSetting("Glowstone Chance", 0, 100, 100, 1);
+	private final NumberSetting explodeDelay = new NumberSetting("Explode Delay", 0, 20, 0, 1);
+	private final NumberSetting explodeChance = new NumberSetting("Explode Chance", 0, 100, 100, 1);
+	private final NumberSetting explodeSlot = new NumberSetting("Explode Slot", 1, 9, 1, 1);
+	private final BooleanSetting onlyOwn = new BooleanSetting("Only Own", false);
+	private final BooleanSetting onlyCharge = new BooleanSetting("Only Charge", false);
 
 	private int switchClock = 0;
 	private int glowstoneClock = 0;
@@ -45,8 +45,8 @@ public final class AnchorMacro extends Module implements TickListener, ItemUseLi
 	private final Set<BlockPos> ownedAnchors = new HashSet<>();
 
 	public AnchorMacro() {
-		super(Anchor Macro,
-				Automatically blows up respawn anchors for you,
+		super("Anchor Macro",
+				"Automatically blows up respawn anchors for you",
 				-1,
 				Category.COMBAT);
 		addSettings(whileUse, stopOnKill, clickSimulation, placeChance, switchDelay, switchChance, glowstoneDelay, glowstoneChance, explodeDelay, explodeChance, explodeSlot, onlyOwn, onlyCharge);

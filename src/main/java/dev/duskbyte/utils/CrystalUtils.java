@@ -8,7 +8,7 @@ import net.minecraft.util.math.Box;
 
 import java.util.List;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 public final class CrystalUtils {
 	public static boolean canPlaceCrystalClient(BlockPos block) {

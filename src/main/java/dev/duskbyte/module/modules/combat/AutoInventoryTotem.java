@@ -21,18 +21,18 @@ public final class AutoInventoryTotem extends Module implements TickListener {
 		Blatant, Random
 	}
 
-	private final ModeSetting<Mode> mode = new ModeSetting<>(Mode, Mode.Blatant, Mode.class)
-			.setDescription(Whether to randomize the toteming pattern or no);
-	private final NumberSetting delay = new NumberSetting(Delay, 0, 20, 0, 1);
-	private final BooleanSetting hotbar = new BooleanSetting(Hotbar, true).setDescription(Puts a totem in your hotbar as well, if enabled (Setting below will work if this is enabled));
-	private final NumberSetting totemSlot = new NumberSetting(Totem Slot, 1, 9, 1, 1)
-			.setDescription(Your preferred totem slot);
-	private final BooleanSetting autoSwitch = new BooleanSetting(Auto Switch, false)
-			.setDescription(Switches to totem slot when going inside the inventory);
-	private final BooleanSetting forceTotem = new BooleanSetting(Force Totem, false).setDescription(Puts the totem in the slot, regardless if its space is taken up by something else);
-	private final BooleanSetting autoOpen = new BooleanSetting(Auto Open, false)
-			.setDescription(Automatically opens and closes the inventory for you);
-	private final NumberSetting stayOpenFor = new NumberSetting(Stay Open For, 0, 20, 0, 1);
+	private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", Mode.Blatant, Mode.class)
+			.setDescription("Whether to randomize the toteming pattern or no");
+	private final NumberSetting delay = new NumberSetting("Delay", 0, 20, 0, 1);
+	private final BooleanSetting hotbar = new BooleanSetting("Hotbar", true).setDescription("Puts a totem in your hotbar as well, if enabled (Setting below will work if this is enabled)");
+	private final NumberSetting totemSlot = new NumberSetting("Totem Slot", 1, 9, 1, 1)
+			.setDescription("Your preferred totem slot");
+	private final BooleanSetting autoSwitch = new BooleanSetting("Auto Switch", false)
+			.setDescription("Switches to totem slot when going inside the inventory");
+	private final BooleanSetting forceTotem = new BooleanSetting("Force Totem", false).setDescription("Puts the totem in the slot, regardless if its space is taken up by something else");
+	private final BooleanSetting autoOpen = new BooleanSetting("Auto Open", false)
+			.setDescription("Automatically opens and closes the inventory for you");
+	private final NumberSetting stayOpenFor = new NumberSetting("Stay Open For", 0, 20, 0, 1);
 
 	int clock = -1;
 	int closeClock = -1;
@@ -41,8 +41,8 @@ public final class AutoInventoryTotem extends Module implements TickListener {
 	TimerUtils closeTimer = new TimerUtils();
 
 	public AutoInventoryTotem() {
-		super(Auto Inventory Totem,
-				Automatically equips a totem in your offhand and main hand if empty,
+		super("Auto Inventory Totem",
+				"Automatically equips a totem in your offhand and main hand if empty",
 				-1,
 				Category.COMBAT);
 		addSettings(mode, delay, hotbar, totemSlot, autoSwitch, forceTotem, autoOpen, stayOpenFor);

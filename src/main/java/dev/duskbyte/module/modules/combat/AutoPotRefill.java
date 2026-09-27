@@ -18,14 +18,14 @@ public final class AutoPotRefill extends Module implements TickListener {
 		Auto, Hover
 	}
 
-	private final ModeSetting<Mode> mode = new ModeSetting<>(Mode, Mode.Auto, Mode.class);
-	private final NumberSetting delay = new NumberSetting(Delay, 0, 10, 0, 1);
+	private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", Mode.Auto, Mode.class);
+	private final NumberSetting delay = new NumberSetting("Delay", 0, 10, 0, 1);
 
 	private int clock;
 
 	public AutoPotRefill() {
-		super(Auto Pot Refill,
-				Refills your hotbar with potions,
+		super("Auto Pot Refill",
+				"Refills your hotbar with potions",
 				-1,
 				Category.COMBAT);
 		addSettings(mode, delay);

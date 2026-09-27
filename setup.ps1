@@ -1,48 +1,84 @@
-# DuskByte - Copy argon code and rename packages
-# Run this from the project root: G:\Dev\DuskByteNext
+# DuskByte - Copy argon code, rename EVERYTHING to duskbyte
+# Run from: G:\Dev\DuskByteNext
 
 $srcRoot = "src\main\java\dev\duskbyte"
 $refRoot = "reference\argon-main\src\main\java\dev\lvstrng\argon"
 
-# Step 1: Delete all existing source files
-Write-Host "=== Step 1: Deleting existing source ===" -ForegroundColor Yellow
+# Step 1: Delete all existing source
+Write-Host "=== Step 1: Delete old source ===" -ForegroundColor Yellow
 if (Test-Path $srcRoot) {
     Remove-Item -Recurse -Force $srcRoot
     Write-Host "  Deleted $srcRoot"
 }
 
-# Step 2: Copy all argon files
-Write-Host "=== Step 2: Copying argon source ===" -ForegroundColor Yellow
+# Step 2: Copy all argon source
+Write-Host "=== Step 2: Copy argon source ===" -ForegroundColor Yellow
 Copy-Item -Recurse -Force $refRoot $srcRoot
 Write-Host "  Copied to $srcRoot"
 
-# Step 3: Replace package names in all .java files
-Write-Host "=== Step 3: Replacing package names ===" -ForegroundColor Yellow
+# Step 3: Rename files that contain "Argon" in filename
+Write-Host "=== Step 3: Rename files ===" -ForegroundColor Yellow
+Get-ChildItem -Path $srcRoot -Recurse -Filter "*Argon*" | ForEach-Object {
+    $newName = $_.Name -replace 'Argon', 'DuskByte'
+    $newName = $newName -replace 'argon', 'duskbyte'
+    Rename-Item $_.FullName -NewName $newName
+    Write-Host "  $($_.Name) -> $newName"
+}
+Get-ChildItem -Path $srcRoot -Recurse -Filter "*argon*" | ForEach-Object {
+    $newName = $_.Name -replace 'argon', 'duskbyte'
+    $newName = $newName -replace 'Argon', 'DuskByte'
+    Rename-Item $_.FullName -NewName $newName
+    Write-Host "  $($_.Name) -> $newName"
+}
+
+# Step 4: Replace ALL text in ALL files
+Write-Host "=== Step 4: Replace all content ===" -ForegroundColor Yellow
 $javaFiles = Get-ChildItem -Path $srcRoot -Recurse -Filter "*.java"
 $count = 0
 foreach ($file in $javaFiles) {
     $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8
+    $original = $content
 
-    # Replace package and import statements
+    # Package/import: dev.lvstrng.argon -> dev.duskbyte
     $content = $content -replace 'dev\.lvstrng\.argon', 'dev.duskbyte'
 
-    # Replace EncryptedString.of("...") with just "..."
-    $content = $content -replace 'EncryptedString\.of\("([^"]*)"\)', '$1'
+    # Class names and references
+    $content = $content -replace '\bArgon\b', 'DuskByte'
 
-    # Remove EncryptedString import lines
-    $content = $content -replace '(?m)^\s*import dev\.duskbyte\.utils\.EncryptedString;\s*\r?\n', ''
+    # EncryptedString.of("...") -> "..."
+    $content = $content -replace 'EncryptedString\.of\("([^"]*)"\)', '"$1"'
 
-    # Replace Argon references
-    $content = $content -replace 'Argon\.INSTANCE', 'DuskByte.INSTANCE'
-    $content = $content -replace 'import dev\.duskbyte\.Argon;', 'import dev.duskbyte.DuskByte;'
+    # Remove EncryptedString imports
+    $content = $content -replace '(?m)^\s*import\s+dev\.duskbyte\.utils\.EncryptedString;\s*\r?\n', ''
 
-    Set-Content -Path $file.FullName -Value $content -Encoding UTF8 -NoNewline
-    $count++
+    # File/class naming: argonJar -> duskByteJar, etc
+    $content = $content -replace 'argonJar', 'duskByteJar'
+    $content = $content -replace 'argon-', 'duskbyte-'
+
+    # Config/file paths
+    $content = $content -replace '"argon"', '"duskbyte"'
+    $content = $content -replace "'argon'", "'duskbyte'"
+
+    if ($content -ne $original) {
+        Set-Content -Path $file.FullName -Value $content -Encoding UTF8 -NoNewline
+        $count++
+    }
 }
-Write-Host "  Modified $count Java files"
+Write-Host "  Modified $count files"
 
-# Step 4: Create/update fabric.mod.json
-Write-Host "=== Step 4: Updating fabric.mod.json ===" -ForegroundColor Yellow
+# Also fix json and properties files
+Write-Host "  Fixing JSON/properties files..." -ForegroundColor Cyan
+$jsonFiles = Get-ChildItem -Path "src\main\resources" -Recurse -Filter "*.json" -ErrorAction SilentlyContinue
+foreach ($file in $jsonFiles) {
+    $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8
+    $content = $content -replace 'dev\.lvstrng\.argon', 'dev.duskbyte'
+    $content = $content -replace 'Argon', 'DuskByte'
+    $content = $content -replace 'argon', 'duskbyte'
+    Set-Content -Path $file.FullName -Value $content -Encoding UTF8 -NoNewline
+}
+
+# Step 5: Create/update fabric.mod.json
+Write-Host "=== Step 5: fabric.mod.json ===" -ForegroundColor Yellow
 $fabricJson = @'
 {
   "schemaVersion": 1,
@@ -71,8 +107,8 @@ $fabricJson = @'
 '@
 Set-Content -Path "src\main\resources\fabric.mod.json" -Value $fabricJson -Encoding UTF8
 
-# Step 5: Create duskbyte.mixins.json
-Write-Host "=== Step 5: Creating duskbyte.mixins.json ===" -ForegroundColor Yellow
+# Step 6: Create duskbyte.mixins.json
+Write-Host "=== Step 6: duskbyte.mixins.json ===" -ForegroundColor Yellow
 $mixinJson = @'
 {
   "required": true,
@@ -115,8 +151,8 @@ $mixinJson = @'
 '@
 Set-Content -Path "src\main\resources\duskbyte.mixins.json" -Value $mixinJson -Encoding UTF8
 
-# Step 6: Update gradle.properties
-Write-Host "=== Step 6: Updating gradle.properties ===" -ForegroundColor Yellow
+# Step 7: Update gradle.properties
+Write-Host "=== Step 7: gradle.properties ===" -ForegroundColor Yellow
 $gradleProps = @'
 org.gradle.jvmargs=-Xmx1G
 
@@ -135,28 +171,47 @@ fabric_version=0.102.0+1.21.1
 '@
 Set-Content -Path "gradle.properties" -Value $gradleProps -Encoding UTF8
 
-# Step 7: Delete old DuskByteClient.java if exists
-Write-Host "=== Step 7: Cleanup ===" -ForegroundColor Yellow
-$oldEntry = "src\main\java\dev\duskbyte\DuskByteClient.java"
-if (Test-Path $oldEntry) {
-    Remove-Item -Force $oldEntry
-    Write-Host "  Deleted DuskByteClient.java"
-}
-
-# Step 8: Delete old setting files that conflict
-$oldSettings = @(
+# Step 8: Cleanup old conflicting files
+Write-Host "=== Step 8: Cleanup ===" -ForegroundColor Yellow
+$oldPaths = @(
+    "src\main\java\dev\duskbyte\DuskByteClient.java",
     "src\main\java\dev\duskbyte\setting",
     "src\main\java\dev\duskbyte\gui",
     "src\main\java\dev\duskbyte\hud",
-    "src\main\java\dev\duskbyte\util"
+    "src\main\java\dev\duskbyte\util",
+    "src\main\java\dev\duskbyte\mixin\ChatMixin.java",
+    "src\main\java\dev\duskbyte\mixin\ClientPlayNetworkHandlerMixin.java"
 )
-foreach ($dir in $oldSettings) {
-    if (Test-Path $dir) {
-        Remove-Item -Recurse -Force $dir
-        Write-Host "  Deleted $dir"
+foreach ($p in $oldPaths) {
+    if (Test-Path $p) {
+        Remove-Item -Recurse -Force $p
+        Write-Host "  Deleted $p"
+    }
+}
+
+# Step 9: Verify key files exist
+Write-Host ""
+Write-Host "=== Verification ===" -ForegroundColor Cyan
+$keyFiles = @(
+    "src\main\java\dev\duskbyte\DuskByte.java",
+    "src\main\java\dev\duskbyte\module\Module.java",
+    "src\main\java\dev\duskbyte\module\ModuleManager.java",
+    "src\main\java\dev\duskbyte\module\Category.java",
+    "src\main\java\dev\duskbyte\module\setting\Setting.java",
+    "src\main\java\dev\duskbyte\event\EventManager.java",
+    "src\main\java\dev\duskbyte\gui\ClickGui.java",
+    "src\main\java\dev\duskbyte\utils\RenderUtils.java",
+    "src\main\resources\fabric.mod.json",
+    "src\main\resources\duskbyte.mixins.json"
+)
+foreach ($f in $keyFiles) {
+    if (Test-Path $f) {
+        Write-Host "  [OK] $f" -ForegroundColor Green
+    } else {
+        Write-Host "  [MISSING] $f" -ForegroundColor Red
     }
 }
 
 Write-Host ""
 Write-Host "=== DONE! ===" -ForegroundColor Green
-Write-Host "Run: .\gradlew.bat build" -ForegroundColor Cyan
+Write-Host "Next: .\gradlew.bat build" -ForegroundColor Cyan

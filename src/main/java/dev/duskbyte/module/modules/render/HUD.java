@@ -17,14 +17,14 @@ import java.awt.*;
 import java.util.List;
 
 public final class HUD extends Module implements HudListener {
-	private static final CharSequence argon = Argon |;
-	private final BooleanSetting info = new BooleanSetting(Info, true);
+	private static final CharSequence DuskByte = "DuskByte |";
+	private final BooleanSetting info = new BooleanSetting("Info", true);
 	private final BooleanSetting modules = new BooleanSetting("Modules", true)
-			.setDescription(Renders module array list);
+			.setDescription("Renders module array list");
 
 	public HUD() {
-		super(HUD,
-				Renders the client version and enabled modules on the HUD,
+		super("HUD",
+				"Renders the client version and enabled modules on the HUD",
 				-1,
 				Category.RENDER);
 		addSettings(info, modules);
@@ -68,7 +68,7 @@ public final class HUD extends Module implements HudListener {
 				if (info.getValue() && mc.player != null) {
 					RenderUtils.unscaledProjection();
 					int argonOffset = 10;
-					int argonOffset2 = 10 + TextRenderer.getWidth(argon);
+					int argonOffset2 = 10 + TextRenderer.getWidth(DuskByte);
 
 					String ping = "Ping: "; // shrimple null check
 					String fps = "FPS: " + mc.getCurrentFps() + " |";
@@ -86,8 +86,8 @@ public final class HUD extends Module implements HudListener {
 
 					RenderUtils.renderRoundedQuad(context.getMatrices(), new Color(35, 35, 35, 255), 5, 6, argonOffset2 + TextRenderer.getWidth(fps) + TextRenderer.getWidth(ping) + TextRenderer.getWidth(server) + 35, 30, 5, 15);
 
-					TextRenderer.drawString(argon, context, argonOffset, 12, Utils.getMainColor(255, 4).getRGB());
-					argonOffset += TextRenderer.getWidth(argon);
+					TextRenderer.drawString(DuskByte, context, argonOffset, 12, Utils.getMainColor(255, 4).getRGB());
+					argonOffset += TextRenderer.getWidth(DuskByte);
 
 					TextRenderer.drawString(fps, context, argonOffset + 10, 12, Utils.getMainColor(255, 3).getRGB());
 					TextRenderer.drawString(ping, context, (argonOffset + 10) + TextRenderer.getWidth(fps) + 10, 12, Utils.getMainColor(255, 2).getRGB());

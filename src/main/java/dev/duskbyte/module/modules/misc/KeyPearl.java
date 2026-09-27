@@ -14,17 +14,17 @@ import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 
 public final class KeyPearl extends Module implements TickListener {
-    private final KeybindSetting activateKey = new KeybindSetting(Activate Key, -1, false);
-    private final NumberSetting delay = new NumberSetting(Delay, 0, 20, 0, 1);
-    private final BooleanSetting switchBack = new BooleanSetting(Switch Back, true);
-    private final NumberSetting switchDelay = new NumberSetting(Switch Delay, 0, 20, 0, 1)
-            .setDescription(Delay after throwing pearl before switching back);
+    private final KeybindSetting activateKey = new KeybindSetting("Activate Key", -1, false);
+    private final NumberSetting delay = new NumberSetting("Delay", 0, 20, 0, 1);
+    private final BooleanSetting switchBack = new BooleanSetting("Switch Back", true);
+    private final NumberSetting switchDelay = new NumberSetting("Switch Delay", 0, 20, 0, 1)
+            .setDescription("Delay after throwing pearl before switching back");
 
     private boolean active, hasActivated;
     private int clock, previousSlot, switchClock;
 
     public KeyPearl() {
-        super(Key Pearl, Switches to an ender pearl and throws it when you press a bind, -1, Category.MISC);
+        super("Key Pearl", "Switches to an ender pearl and throws it when you press a bind", -1, Category.MISC);
         addSettings(activateKey, delay, switchBack, switchDelay);
     }
 

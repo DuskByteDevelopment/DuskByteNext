@@ -14,20 +14,20 @@ import net.minecraft.util.hit.BlockHitResult;
 
 
 public final class Prevent extends Module implements ItemUseListener, AttackListener, BlockBreakingListener {
-	private final BooleanSetting doubleGlowstone = new BooleanSetting(Double Glowstone, false)
-			.setDescription(Makes it so you can't charge the anchor again if it's already charged);
-	private final BooleanSetting glowstoneMisplace = new BooleanSetting(Glowstone Misplace, false)
-			.setDescription(Makes it so you can only right-click with glowstone only when aiming at an anchor);
-	private final BooleanSetting anchorOnAnchor = new BooleanSetting(Anchor on Anchor, false)
-			.setDescription(Makes it so you can't place an anchor on/next to another anchor unless charged);
-	private final BooleanSetting obiPunch = new BooleanSetting(Obi Punch, false)
-			.setDescription(Makes it so you can crystal faster by not letting you left click/start breaking the obsidian);
-	private final BooleanSetting echestClick = new BooleanSetting(E-chest click, false)
-			.setDescription(Makes it so you can't click on e-chests with PvP items);
+	private final BooleanSetting doubleGlowstone = new BooleanSetting("Double Glowstone", false)
+			.setDescription("Makes it so you can't charge the anchor again if it's already charged");
+	private final BooleanSetting glowstoneMisplace = new BooleanSetting("Glowstone Misplace", false)
+			.setDescription("Makes it so you can only right-click with glowstone only when aiming at an anchor");
+	private final BooleanSetting anchorOnAnchor = new BooleanSetting("Anchor on Anchor", false)
+			.setDescription("Makes it so you can't place an anchor on/next to another anchor unless charged");
+	private final BooleanSetting obiPunch = new BooleanSetting("Obi Punch", false)
+			.setDescription("Makes it so you can crystal faster by not letting you left click/start breaking the obsidian");
+	private final BooleanSetting echestClick = new BooleanSetting("E-chest click", false)
+			.setDescription("Makes it so you can't click on e-chests with PvP items");
 
 	public Prevent() {
-		super(Prevent,
-				Prevents you from certain actions,
+		super("Prevent",
+				"Prevents you from certain actions",
 				-1,
 				Category.MISC);
 		addSettings(doubleGlowstone, glowstoneMisplace, anchorOnAnchor, obiPunch, echestClick);

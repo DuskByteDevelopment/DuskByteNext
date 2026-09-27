@@ -28,15 +28,15 @@ public final class PlayerESP extends Module implements GameRenderListener {
 		TwoD, ThreeD
 	}
 
-	public final ModeSetting<Mode> mode = new ModeSetting<>(Mode, Mode.ThreeD, Mode.class);
-	private final NumberSetting alpha = new NumberSetting(Alpha, 0, 255, 100, 1);
-	private final NumberSetting width = new NumberSetting(Line width, 1, 10, 1, 1);
-	private final BooleanSetting tracers = new BooleanSetting(Tracers, false)
-			.setDescription(Draws a line from your player to the other);
+	public final ModeSetting<Mode> mode = new ModeSetting<>("Mode", Mode.ThreeD, Mode.class);
+	private final NumberSetting alpha = new NumberSetting("Alpha", 0, 255, 100, 1);
+	private final NumberSetting width = new NumberSetting("Line width", 1, 10, 1, 1);
+	private final BooleanSetting tracers = new BooleanSetting("Tracers", false)
+			.setDescription("Draws a line from your player to the other");
 
 	public PlayerESP() {
-		super(Player ESP,
-				Renders players through walls,
+		super("Player ESP",
+				"Renders players through walls",
 				-1,
 				Category.RENDER);
 		addSettings(alpha, mode, width, tracers);

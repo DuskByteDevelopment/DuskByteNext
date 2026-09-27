@@ -9,7 +9,7 @@ public final class Main implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		try {
-			new Argon();
+			new DuskByte();
 		} catch (InterruptedException | IOException ignored) {}
 	}
 }

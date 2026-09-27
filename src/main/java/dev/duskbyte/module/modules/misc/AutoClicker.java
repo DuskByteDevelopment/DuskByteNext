@@ -20,15 +20,15 @@ import org.lwjgl.glfw.GLFW;
 
 
 public final class AutoClicker extends Module implements TickListener {
-	private final BooleanSetting onlyWeapon = new BooleanSetting(Only Weapon, true)
-			.setDescription(Only left clicks with weapon in hand);
-	private final BooleanSetting onlyBlocks = new BooleanSetting(Only Blocks, true)
-			.setDescription(Only right clicks blocks);
-	private final BooleanSetting onClick = new BooleanSetting(On Click, true);
+	private final BooleanSetting onlyWeapon = new BooleanSetting("Only Weapon", true)
+			.setDescription("Only left clicks with weapon in hand");
+	private final BooleanSetting onlyBlocks = new BooleanSetting("Only Blocks", true)
+			.setDescription("Only right clicks blocks");
+	private final BooleanSetting onClick = new BooleanSetting("On Click", true);
 
-	private final NumberSetting delay = new NumberSetting(Delay, 0, 1000, 0, 1);
-	private final NumberSetting chance = new NumberSetting(Chance, 0, 100, 100, 1);
-	private final ModeSetting<Mode> mode = new ModeSetting<>(Actions, Mode.All, Mode.class);
+	private final NumberSetting delay = new NumberSetting("Delay", 0, 1000, 0, 1);
+	private final NumberSetting chance = new NumberSetting("Chance", 0, 100, 100, 1);
+	private final ModeSetting<Mode> mode = new ModeSetting<>("Actions", Mode.All, Mode.class);
 	private final TimerUtils timer = new TimerUtils();
 
 	public enum Mode {
@@ -36,8 +36,8 @@ public final class AutoClicker extends Module implements TickListener {
 	}
 
 	public AutoClicker() {
-		super(Auto Clicker,
-				Automatically clicks for you,
+		super("Auto Clicker",
+				"Automatically clicks for you",
 				-1,
 				Category.MISC);
 

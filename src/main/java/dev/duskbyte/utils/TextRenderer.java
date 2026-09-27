@@ -5,7 +5,7 @@ import dev.duskbyte.module.modules.client.ClickGUI;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 
 public final class TextRenderer {

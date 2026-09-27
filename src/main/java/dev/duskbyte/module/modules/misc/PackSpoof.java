@@ -9,7 +9,7 @@ import net.minecraft.network.packet.s2c.common.ResourcePackSendS2CPacket;
 
 public class PackSpoof extends Module implements PacketReceiveListener {
     public PackSpoof() {
-        super(Pack Spoof, Ignores custom resource packs, -1, Category.MISC);
+        super("Pack Spoof", "Ignores custom resource packs", -1, Category.MISC);
     }
 
     @Override

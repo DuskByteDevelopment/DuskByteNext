@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 
 public class DamageUtils {

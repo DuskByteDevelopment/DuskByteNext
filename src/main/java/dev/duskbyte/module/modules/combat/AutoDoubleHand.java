@@ -22,41 +22,41 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public final class AutoDoubleHand extends Module implements HudListener {
-	private final BooleanSetting stopOnCrystal = new BooleanSetting(Stop On Crystal, false)
-			.setDescription(Stops while Auto Crystal is running);
-	private final BooleanSetting checkShield = new BooleanSetting(Check Shield, false)
-			.setDescription(Checks if you're blocking with a shield);
+	private final BooleanSetting stopOnCrystal = new BooleanSetting("Stop On Crystal", false)
+			.setDescription("Stops while Auto Crystal is running");
+	private final BooleanSetting checkShield = new BooleanSetting("Check Shield", false)
+			.setDescription("Checks if you're blocking with a shield");
 
-	private final BooleanSetting onPop = new BooleanSetting(On Pop, false)
-			.setDescription(Switches to a totem if you pop);
-	private final BooleanSetting onHealth = new BooleanSetting(On Health, false)
-			.setDescription(Switches to totem if low on health);
-	private final BooleanSetting predict = new BooleanSetting(Predict Damage, true);
+	private final BooleanSetting onPop = new BooleanSetting("On Pop", false)
+			.setDescription("Switches to a totem if you pop");
+	private final BooleanSetting onHealth = new BooleanSetting("On Health", false)
+			.setDescription("Switches to totem if low on health");
+	private final BooleanSetting predict = new BooleanSetting("Predict Damage", true);
 
-	private final NumberSetting health = new NumberSetting(Health, 1, 20, 2, 1)
-			.setDescription(Health to trigger at);
-	private final BooleanSetting onGround = new BooleanSetting(On Ground, true)
-			.setDescription(Whether crystal damage is checked on ground or not);
-	private final BooleanSetting checkPlayers = new BooleanSetting(Check Players, true)
-			.setDescription(Checks for nearby players);
+	private final NumberSetting health = new NumberSetting("Health", 1, 20, 2, 1)
+			.setDescription("Health to trigger at");
+	private final BooleanSetting onGround = new BooleanSetting("On Ground", true)
+			.setDescription("Whether crystal damage is checked on ground or not");
+	private final BooleanSetting checkPlayers = new BooleanSetting("Check Players", true)
+			.setDescription("Checks for nearby players");
 
-	private final NumberSetting distance = new NumberSetting(Distance, 1, 10, 5, 0.1)
-			.setDescription(Player distance);
-	private final BooleanSetting predictCrystals = new BooleanSetting(Predict Crystals, false);
-	private final BooleanSetting checkAim = new BooleanSetting(Check Aim, false)
-			.setDescription(Checks if the opponent is aiming at obsidian);
-	private final BooleanSetting checkItems = new BooleanSetting(Check Items, false)
-			.setDescription(Checks if the opponent is holding crystals);
+	private final NumberSetting distance = new NumberSetting("Distance", 1, 10, 5, 0.1)
+			.setDescription("Player distance");
+	private final BooleanSetting predictCrystals = new BooleanSetting("Predict Crystals", false);
+	private final BooleanSetting checkAim = new BooleanSetting("Check Aim", false)
+			.setDescription("Checks if the opponent is aiming at obsidian");
+	private final BooleanSetting checkItems = new BooleanSetting("Check Items", false)
+			.setDescription("Checks if the opponent is holding crystals");
 
-	private final NumberSetting activatesAbove = new NumberSetting(Activates Above, 0, 4, 0.2, 0.1)
-			.setDescription(Height to trigger at);
+	private final NumberSetting activatesAbove = new NumberSetting("Activates Above", 0, 4, 0.2, 0.1)
+			.setDescription("Height to trigger at");
 
 	private boolean belowHealth;
 	private boolean offhandHasNoTotem;
 
 	public AutoDoubleHand() {
-		super(Auto Double Hand,
-				Automatically switches to your totem when you're about to pop,
+		super("Auto Double Hand",
+				"Automatically switches to your totem when you're about to pop",
 				-1,
 				Category.COMBAT);
 		addSettings(stopOnCrystal, checkShield, onPop, onHealth, predict, health, onGround, checkPlayers, distance, predictCrystals, checkAim, checkItems, activatesAbove);

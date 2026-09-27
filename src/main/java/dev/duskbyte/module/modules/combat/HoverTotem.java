@@ -12,18 +12,18 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 
 public final class HoverTotem extends Module implements TickListener {
-	private final NumberSetting delay = new NumberSetting(Delay, 0, 20, 0, 1);
-	private final BooleanSetting hotbar = new BooleanSetting(Hotbar, true).setDescription(Puts a totem in your hotbar as well, if enabled (Setting below will work if this is enabled));
-	private final NumberSetting slot = new NumberSetting(Totem Slot, 1, 9, 1, 1)
-			.setDescription(Your preferred totem slot);
-	private final BooleanSetting autoSwitch = new BooleanSetting(Auto Switch, false)
-			.setDescription(Switches to totem slot when going inside the inventory);
+	private final NumberSetting delay = new NumberSetting("Delay", 0, 20, 0, 1);
+	private final BooleanSetting hotbar = new BooleanSetting("Hotbar", true).setDescription("Puts a totem in your hotbar as well, if enabled (Setting below will work if this is enabled)");
+	private final NumberSetting slot = new NumberSetting("Totem Slot", 1, 9, 1, 1)
+			.setDescription("Your preferred totem slot");
+	private final BooleanSetting autoSwitch = new BooleanSetting("Auto Switch", false)
+			.setDescription("Switches to totem slot when going inside the inventory");
 
 	private int clock;
 
 	public HoverTotem() {
-		super(Hover Totem,
-				Equips a totem in your totem and offhand slots if a totem is hovered,
+		super("Hover Totem",
+				"Equips a totem in your totem and offhand slots if a totem is hovered",
 				-1,
 				Category.COMBAT);
 		addSettings(delay, hotbar, slot, autoSwitch);

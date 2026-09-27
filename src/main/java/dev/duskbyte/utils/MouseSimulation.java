@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 
 public final class MouseSimulation {

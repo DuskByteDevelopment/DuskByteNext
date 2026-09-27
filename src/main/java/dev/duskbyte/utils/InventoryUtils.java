@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 public final class InventoryUtils {
 

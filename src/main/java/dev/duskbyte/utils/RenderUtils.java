@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 
 public final class RenderUtils {

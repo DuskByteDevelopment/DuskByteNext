@@ -13,7 +13,7 @@ import net.minecraft.util.math.Box;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 
 public final class BlockUtils {

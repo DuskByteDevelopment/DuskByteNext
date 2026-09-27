@@ -25,7 +25,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static dev.duskbyte.Argon.mc;
+import static dev.duskbyte.DuskByte.mc;
 
 public final class WorldUtils {
 	public static boolean isDeadBodyNearby() {

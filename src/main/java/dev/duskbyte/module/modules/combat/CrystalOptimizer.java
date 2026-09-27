@@ -20,8 +20,8 @@ import net.minecraft.util.math.Vec3d;
 
 public final class CrystalOptimizer extends Module implements PacketSendListener {
 	public CrystalOptimizer() {
-		super(Crystal Optimizer,
-				Makes your crystals disappear faster client-side so you can place crystals faster,
+		super("Crystal Optimizer",
+				"Makes your crystals disappear faster client-side so you can place crystals faster",
 				-1,
 				Category.COMBAT);
 	}

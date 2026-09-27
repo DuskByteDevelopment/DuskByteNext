@@ -10,15 +10,15 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.util.hit.HitResult;
 
 public final class NoMissDelay extends Module implements AttackListener, BlockBreakingListener {
-	private final BooleanSetting onlyWeapon = new BooleanSetting(Only weapon, true);
-	private final BooleanSetting air = new BooleanSetting(Air, true)
-			.setDescription(Whether to stop hits directed to the air);
-	private final BooleanSetting blocks = new BooleanSetting(Blocks, false)
-			.setDescription(Whether to stop hits directed to blocks);
+	private final BooleanSetting onlyWeapon = new BooleanSetting("Only weapon", true);
+	private final BooleanSetting air = new BooleanSetting("Air", true)
+			.setDescription("Whether to stop hits directed to the air");
+	private final BooleanSetting blocks = new BooleanSetting("Blocks", false)
+			.setDescription("Whether to stop hits directed to blocks");
 
 	public NoMissDelay() {
-		super(No Miss Delay,
-				Doesn't let you miss your sword/axe hits,
+		super("No Miss Delay",
+				"Doesn't let you miss your sword/axe hits",
 				-1,
 				Category.COMBAT);
 		addSettings(onlyWeapon, air, blocks);

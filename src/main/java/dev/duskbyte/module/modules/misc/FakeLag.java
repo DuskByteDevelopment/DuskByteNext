@@ -26,14 +26,14 @@ public final class FakeLag extends Module implements PlayerTickListener, PacketR
 	public boolean bool;
 	public Vec3d pos = Vec3d.ZERO;
 	public TimerUtils timerUtil = new TimerUtils();
-	private final MinMaxSetting lagDelay = new MinMaxSetting(Lag Delay, 0, 1000, 1, 100, 200);
-	private final BooleanSetting cancelOnElytra = new BooleanSetting(Cancel on Elytra, false)
-			.setDescription(Cancel the lagging effect when you're wearing an elytra);
+	private final MinMaxSetting lagDelay = new MinMaxSetting("Lag Delay", 0, 1000, 1, 100, 200);
+	private final BooleanSetting cancelOnElytra = new BooleanSetting("Cancel on Elytra", false)
+			.setDescription("Cancel the lagging effect when you're wearing an elytra");
 
 	private int delay;
 	public FakeLag() {
-		super(Fake Lag,
-				Makes it impossible to aim at you by creating a lagging effect,
+		super("Fake Lag",
+				"Makes it impossible to aim at you by creating a lagging effect",
 				-1,
 				Category.MISC);
 		addSettings(lagDelay, cancelOnElytra);

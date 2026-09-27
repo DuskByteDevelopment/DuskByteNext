@@ -5,7 +5,7 @@ import dev.duskbyte.module.Category;
 import dev.duskbyte.module.Module;
 public final class Sprint extends Module implements TickListener {
     public Sprint() {
-        super(Sprint, Keeps you sprinting at all times, -1, Category.MISC);
+        super("Sprint", "Keeps you sprinting at all times", -1, Category.MISC);
     }
 
     @Override

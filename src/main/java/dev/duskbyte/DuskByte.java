@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.*;
 
 @SuppressWarnings("all")
-public final class Argon {
+public final class DuskByte {
 	public RotatorManager rotatorManager;
 	public ProfileManager profileManager;
 	public ModuleManager moduleManager;
@@ -23,14 +23,14 @@ public final class Argon {
 	public static MinecraftClient mc;
 	public String version = " b1.3";
 	public static boolean BETA; //this was for beta kids but ablue never made it a reality, and you basically paid extra 10 bucks for nothing while ablue spent it all on war thunder to buy pre-historic tanks and estrogen 🤡🤡🤡
-	public static Argon INSTANCE;
+	public static DuskByte INSTANCE;
 	public boolean guiInitialized;
 	public ClickGui clickGui;
 	public Screen previousScreen = null;
 	public long lastModified;
-	public File argonJar;
+	public File duskByteJar;
 
-	public Argon() throws InterruptedException, IOException {
+	public DuskByte() throws InterruptedException, IOException {
 		INSTANCE = this;
 		this.eventManager = new EventManager();
 		this.moduleManager = new ModuleManager();
@@ -67,7 +67,7 @@ public final class Argon {
 	}
 
 	public void resetModifiedDate() {
-		this.argonJar.setLastModified(lastModified);
+		this.duskByteJar.setLastModified(lastModified);
 	}
 
 	public String getVersion() {
@@ -76,9 +76,9 @@ public final class Argon {
 
 	public void setLastModified() {
 		try {
-			this.argonJar = new File(Argon.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+			this.duskByteJar = new File(DuskByte.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 			// Comment out when debugging
-			this.lastModified = argonJar.lastModified();
+			this.lastModified = duskByteJar.lastModified();
 		} catch (URISyntaxException ignored) {}
 	}
 }
