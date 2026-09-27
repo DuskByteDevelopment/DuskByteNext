@@ -67,30 +67,4 @@ tasks.named('sourcesJar') {
 task printVersion {
     doFirst { println "Building DuskByteClient v${project.version}" }
 }
-task printClasspath {
-    doFirst {
-        def files = []
-        files.addAll(configurations.runtimeClasspath.files)
-        files.addAll(configurations.compileClasspath.files)
-        def loomDir = new File(projectDir, '.gradle/loom-cache/minecraftMaven')
-        if (loomDir.exists()) {
-            loomDir.eachFileRecurse { f ->
-                if (f.name.endsWith('.jar') && !files.contains(f)) {
-                    files.add(f)
-                }
-            }
-        }
-        def gradleHome = gradle.gradleUserHomeDir ?: new File(System.getProperty('user.home'), '.gradle')
-        def globalLoom = new File(gradleHome, 'caches/fabric-loom/minecraftMaven')
-        if (globalLoom.exists()) {
-            globalLoom.eachFileRecurse { f ->
-                if (f.name.endsWith('.jar') && !files.contains(f)) {
-                    files.add(f)
-                }
-            }
-        }
-        def cp = files.collect { it.absolutePath }.join(';')
-        println cp
-    }
-}
 build.dependsOn printVersion

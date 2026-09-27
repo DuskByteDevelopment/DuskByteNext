@@ -1,4 +1,4 @@
-name: Build and Obfuscate
+name: Build
 
 on:
   push:
@@ -29,153 +29,20 @@ jobs:
         with:
           gradle-version: '8.8'
 
-      - name: Build (named dev JAR only)
+      - name: Build
         shell: pwsh
         run: |
           gradle wrapper --gradle-version 8.8
-          # 只跑 :jar —— Loom 1.7 会把 yarn named 字节码输出到 build/devlibs/*-dev.jar
-          # (build/libs 下的是 :remapJar 的 intermediary 产物,命名空间和 named
-          #  libraryjars 不一致,ZKM 会报 getVertexSorting 之类的方法找不到)。
-          # ZKM 混淆 named jar,之后再单独跑 :remapJar 转成最终的 intermediary 产物。
-          .\gradlew.bat clean jar
-      - name: Find built JAR
-        id: findjar
+          .\gradlew.bat clean build
+
+      - name: Remove sources jar
         shell: pwsh
-        run: |
-          $jar = Get-ChildItem build/devlibs -Filter *.jar |
-                 Where-Object { $_.Name -notmatch 'sources' -and $_.Name -notmatch 'obf' } |
-                 Select-Object -First 1
-          if (-not $jar) { Write-Error "no named (dev) jar found in build/devlibs"; exit 1 }
-          "jar=$($jar.FullName)" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
-          Write-Host "Found: $($jar.FullName)"
-      - name: Collect classpath from Gradle
-        shell: pwsh
-        run: .\gradlew.bat -q printClasspath | Out-File -Encoding ascii cp.txt
+        run: Remove-Item build/libs/*sources*.jar -ErrorAction SilentlyContinue
 
-      - name: Strip nested jars (fix ZKM mixin crash)
-        shell: pwsh
-        run: .\zkm_strip_nested.ps1 -Jar "${{ steps.findjar.outputs.jar }}" -NestedDir "zkm_nested"
-
-      - name: Generate ZKM script
-        shell: pwsh
-        run: |
-          Copy-Item "${{ steps.findjar.outputs.jar }}" build/libs/duskbyte_obf.jar -Force
-          # injar 现在是 :jar 的 named 字节码,libraryjars 必须保持 named 形式且保持原顺序
-          # (cp.txt 里 named 的 minecraft-merged jar 排在前面,ZKM 优先解析到它)。
-          # 不要按 'intermediary' 过滤、也不要 Sort 重排,否则会引入命名空间不一致。
-          $libs = Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } |
-              Where-Object { $_ -and (Test-Path $_) } |
-              ForEach-Object { "-libraryjars `"$($_.Replace('\','/'))`"" }
-          Write-Host "===== cp.txt 中的 minecraft-merged 条目(按此顺序供 ZKM 解析) ====="
-          Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } |
-              Where-Object { $_ -match 'minecraft-merged' } | ForEach-Object { Write-Host $_ }
-          $head = @(
-              '-injars "build/libs/duskbyte_obf.jar"',
-              '-outjars "build/libs/duskbyte_obf.jar"',
-              '-libraryjars "<java.home>/lib/jrt-fs.jar"'
-          )
-          $tail = (Get-Content obfuscate.pro -Raw).Replace('\','/')
-          $all = $head + $libs + $tail
-          Set-Content -Path zkm_obf.pro -Value $all -Encoding ascii
-          Write-Host "library jars: $($libs.Count)"
-      # ---------- 新增诊断步骤:定位签名不一致的真实原因 ----------
-      - name: Diagnose RenderSystem method signature
-        shell: pwsh
-        run: |
-          Write-Host "===== [1] cp.txt 收集到的 library jar 总数 ====="
-          $allLibs = Get-Content cp.txt -Raw | ForEach-Object { $_.Trim().Split(';') } | Where-Object { $_ }
-          Write-Host "total entries: $($allLibs.Count)"
-
-          Write-Host "===== [2] cp.txt 里所有匹配 'minecraft-merged' 的条目 ====="
-          $mergedJars = $allLibs | Where-Object { $_ -match 'minecraft-merged' }
-          $mergedJars | ForEach-Object { Write-Host $_ }
-          if ($mergedJars.Count -gt 1) {
-              Write-Warning "发现多个 minecraft-merged jar,这很可能就是签名找不到的原因!"
-          }
-
-          $mergedJar = $mergedJars | Select-Object -First 1
-          if (-not $mergedJar) {
-              Write-Warning "cp.txt 里根本没有 minecraft-merged jar,classpath 收集有问题!"
-          } else {
-              New-Item -ItemType Directory -Force -Path rs_check | Out-Null
-              Push-Location rs_check
-              & jar xf "$mergedJar" com/mojang/blaze3d/systems/RenderSystem.class
-              Write-Host "===== [3] merged jar 里 RenderSystem 的 setProjectionMatrix 重载 ====="
-              & javap -p com/mojang/blaze3d/systems/RenderSystem.class | Select-String -Pattern "setProjectionMatrix"
-              Pop-Location
-          }
-
-          Write-Host "===== [4] duskbyte_obf.jar 里 RenderUtils.class 实际调用的签名 ====="
-          New-Item -ItemType Directory -Force -Path ru_check | Out-Null
-          Push-Location ru_check
-          & jar xf ../build/libs/duskbyte_obf.jar dev/duskbyte/utils/RenderUtils.class
-          & javap -c -p dev/duskbyte/utils/RenderUtils.class | Select-String -Pattern "setProjectionMatrix" -Context 1,1
-          Pop-Location
-      # ---------- 诊断步骤结束 ----------
-
-      - name: Run ZKM
-        run: java -Xmx2G -jar zkm/zkm27.jar zkm_obf.pro
-
-      # ---------- 新增诊断步骤:确认 -keepattributes 是否真的生效 ----------
-      - name: Diagnose annotation stripping
-        shell: pwsh
-        run: |
-          Write-Host "===== [A] ZKM_PG_log.txt (ProGuard 配置翻译日志,通常在仓库根目录) ====="
-          if (Test-Path "ZKM_PG_log.txt") {
-              Get-Content "ZKM_PG_log.txt" | Select-String -Pattern "keepattributes|Annotation|WARNING" -Context 0,1
-          } else {
-              Write-Warning "没找到 ZKM_PG_log.txt,说明没走 ProGuard 翻译路径,或路径不对"
-          }
-
-          Write-Host "===== [B] ZKM_log.txt (通常和 mapping.txt 同目录 build/libs) ====="
-          if (Test-Path "build/libs/ZKM_log.txt") {
-              Get-Content "build/libs/ZKM_log.txt" | Select-String -Pattern "ClientConnectionMixin|Annotation" -Context 0,1
-          } else {
-              Write-Warning "没找到 build/libs/ZKM_log.txt"
-          }
-
-          Write-Host "===== [C] 混淆后 ClientConnectionMixin.class 是否还带 RuntimeVisibleAnnotations ====="
-          New-Item -ItemType Directory -Force -Path mixin_check | Out-Null
-          Push-Location mixin_check
-          & jar xf ../build/libs/duskbyte_obf.jar dev/duskbyte/mixin/ClientConnectionMixin.class
-          & javap -v -p dev/duskbyte/mixin/ClientConnectionMixin.class | Select-String -Pattern "RuntimeVisibleAnnotations|@org.spongepowered|Mixin\(" -Context 0,3
-          Pop-Location
-      # ---------- 诊断步骤结束 ----------
-
-      - name: Upload ZKM logs
-        if: always()
+      - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
-          name: zkm-logs-${{ github.sha }}
-          path: |
-            ZKM_PG_log.txt
-            build/libs/ZKM_log.txt
-            build/libs/mapping.txt
-          if-no-files-found: ignore
-
-      - name: Restore nested jars into obfuscated JAR
-        shell: pwsh
-        run: .\zkm_restore_nested.ps1 -Jar build/libs/duskbyte_obf.jar -NestedDir zkm_nested
-
-      - name: Replace original JAR with obfuscated one
-        shell: pwsh
-        run: |
-          $out = "${{ steps.findjar.outputs.jar }}"
-          Remove-Item build/libs/*sources*.jar -ErrorAction SilentlyContinue
-          Copy-Item build/libs/duskbyte_obf.jar $out -Force
-          Remove-Item build/libs/duskbyte_obf.jar -ErrorAction SilentlyContinue
-
-      # 把混淆后的 named jar 重映射成最终的 intermediary 产物(build/libs/*.jar)。
-      # 必须 -x jar:我们改写了 :jar 的输出文件,Gradle 会认为 :jar 输出过期而重跑,
-      # 重跑会用未混淆的 class 把混淆结果覆盖掉。
-      - name: Remap obfuscated JAR to intermediary (final artifact)
-        shell: pwsh
-        run: .\gradlew.bat remapJar -x jar
-
-      - name: Upload obfuscated JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: DuskByte-Obfuscated-${{ github.sha }}
+          name: DuskByte-${{ github.sha }}
           path: build/libs/*.jar
           retention-days: 30
           if-no-files-found: error
@@ -189,7 +56,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: DuskByte-Obfuscated-${{ github.sha }}
+          name: DuskByte-${{ github.sha }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
