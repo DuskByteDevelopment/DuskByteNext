@@ -306,11 +306,9 @@ public final class RenderUtils {
 	public static void renderLine(MatrixStack matrices, Color color, Vec3d start, Vec3d end) {
 		matrices.push();
 		Matrix4f s = matrices.peek().getPositionMatrix();
-		if (ClickGUI.antiAliasing.getValue()) {
-			GL11.glEnable(GL13.GL_MULTISAMPLE);
-			GL11.glEnable(GL11.GL_LINE_SMOOTH);
-			GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-		}
+		GL11.glEnable(GL13.GL_MULTISAMPLE);
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
 		GL11.glDepthFunc(GL11.GL_ALWAYS);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.defaultBlendFunc();
@@ -332,10 +330,8 @@ public final class RenderUtils {
 
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		RenderSystem.disableBlend();
-		if (ClickGUI.antiAliasing.getValue()) {
-			GL11.glDisable(GL11.GL_LINE_SMOOTH);
-			GL11.glDisable(GL13.GL_MULTISAMPLE);
-		}
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		GL11.glDisable(GL13.GL_MULTISAMPLE);
 		matrices.pop();
 	}
 
