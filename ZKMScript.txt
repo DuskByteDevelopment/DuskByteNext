@@ -1,6 +1,0 @@
-obfuscate
-  keepInnerClassInfo=true
-  keepGenericsInfo=true
-  keepAnnotations=true
-  changeLogFileOut="build/libs/mapping.txt"
-  ;

@@ -5,6 +5,7 @@ import dev.duskbyte.module.Category;
 import dev.duskbyte.module.modules.client.ClickGUI;
 import dev.duskbyte.utils.ColorUtils;
 import dev.duskbyte.utils.RenderUtils;
+import dev.duskbyte.utils.ClickGuiBackground;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -60,8 +61,17 @@ public final class ClickGui extends Screen {
 			if (currentColor.getAlpha() != (ClickGUI.background.getValue() ? 200 : 0))
 				currentColor = ColorUtils.smoothAlphaTransition(0.05F, ClickGUI.background.getValue() ? 200 : 0, currentColor);
 
-			if (mc.currentScreen instanceof ClickGui)
-				context.fill(0, 0, mc.getWindow().getWidth(), mc.getWindow().getHeight(), currentColor.getRGB());
+			if (mc.currentScreen instanceof ClickGui) {
+				if (ClickGUI.background.getValue()) {
+					float alpha = currentColor.getAlpha() / 255f;
+					// 尝试渲染我们刚才准备的 assets/duskbyte/textures/background.jpg
+					boolean rendered = ClickGuiBackground.draw(context, mc.getWindow().getWidth(), mc.getWindow().getHeight(), alpha);
+					if (!rendered) {
+						// 若图片未加载成功，回退到原先的纯色半透明背景
+						context.fill(0, 0, mc.getWindow().getWidth(), mc.getWindow().getHeight(), currentColor.getRGB());
+					}
+				}
+			}
 
 			RenderUtils.unscaledProjection();
 			mouseX *= (int) MinecraftClient.getInstance().getWindow().getScaleFactor();

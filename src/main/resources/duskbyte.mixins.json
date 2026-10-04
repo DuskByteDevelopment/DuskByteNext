@@ -13,6 +13,7 @@
   "client": [
     "BufferRendererAccessor",
     "CameraMixin",
+    "ClickableWidgetMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerAccessor",
     "ClientPlayerInteractionManagerMixin",
