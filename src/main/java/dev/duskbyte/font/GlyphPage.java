@@ -168,7 +168,8 @@ public final class GlyphPage {
 	}
 
 	public float getWidth(char ch) {
-		return glyphCharacterMap.get(ch).width;
+		Glyph glyph = glyphCharacterMap.get(ch);
+		return glyph != null ? glyph.width : 0;
 	}
 
 	public boolean isAntiAliasingEnabled() {
